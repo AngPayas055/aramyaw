@@ -16,6 +16,8 @@ import {
 import AuthShell from "@/app/components/auth/AuthShell";
 import styles from "@/app/components/auth/AuthForm.module.css";
 
+import { registerUser } from "@/services/auth.service";
+
 type SignUpValues = {
   firstName: string;
   lastName: string;
@@ -26,21 +28,9 @@ type SignUpValues = {
   acceptTerms: boolean;
 };
 
-type RegisterResponse = {
-  success: boolean;
-  message: string;
-  user?: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    contactNumber: string;
-    role: string;
-  };
-};
-
 export default function SignUpPage() {
   const router = useRouter();
+
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -48,30 +38,17 @@ export default function SignUpPage() {
     try {
       setLoading(true);
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            firstName: values.firstName.trim(),
-            lastName: values.lastName.trim(),
-            email: values.email.trim().toLowerCase(),
-            contactNumber: values.contactNumber.trim(),
-            password: values.password,
-          }),
-        },
+      const data = await registerUser({
+        firstName: values.firstName.trim(),
+        lastName: values.lastName.trim(),
+        email: values.email.trim().toLowerCase(),
+        contactNumber: values.contactNumber.trim(),
+        password: values.password,
+      });
+
+      messageApi.success(
+        data.message || "Account created successfully.",
       );
-
-      const data: RegisterResponse = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to create account.");
-      }
-
-      messageApi.success(data.message || "Account created successfully.");
 
       setTimeout(() => {
         router.push("/signin");
@@ -241,7 +218,9 @@ export default function SignUpPage() {
                   checked
                     ? Promise.resolve()
                     : Promise.reject(
-                        new Error("Please accept the terms to continue."),
+                        new Error(
+                          "Please accept the terms to continue.",
+                        ),
                       ),
               },
             ]}
@@ -267,7 +246,8 @@ export default function SignUpPage() {
         </Form>
 
         <p className={styles.switchText}>
-          Already have an account? <Link href="/signin">Sign in</Link>
+          Already have an account?{" "}
+          <Link href="/signin">Sign in</Link>
         </p>
       </AuthShell>
     </>
