@@ -1,0 +1,17 @@
+.site-header { height:82px; padding:0 clamp(20px,5vw,72px); display:flex; align-items:center; justify-content:space-between; gap:32px; background:#11100ff2; color:white; position:absolute; z-index:20; inset:0 0 auto; border-bottom:1px solid #ffffff24; }
+.brand { display: inline-flex; align-items: center; gap: 12px; }
+.brand img { border-radius: 50%; object-fit: cover; }
+.brand span { display: grid; line-height: 1; }
+.brand strong { font-size: 19px; letter-spacing: 0.08em; }
+.brand small { margin-top: 5px; color: var(--gold); font-size: 10px; font-weight: 800; letter-spacing: 0.28em; }
+
+nav { display: flex; align-items: center; gap: 34px; font-size: 14px; font-weight: 700; }
+nav a { color: #eee; transition: color 0.2s; }
+nav a:hover { color: var(--gold); }
+
+@media (max-width: 850px) {
+  .site-header { height: 72px; }
+  nav,
+  .site-header > .ant-btn { display: none; }
+}
+

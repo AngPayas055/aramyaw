@@ -1,0 +1,16 @@
+.contact-section { display: grid; grid-template-columns: 0.75fr 1.25fr; gap: 80px; align-items: start; }
+.contact-list { border-top: 1px solid #c6beb0; }
+.contact-list a { display: grid; grid-template-columns: 42px 1fr auto; align-items: center; gap: 16px; min-height: 94px; border-bottom: 1px solid #c6beb0; font-weight: 800; transition: padding 0.2s, color 0.2s; }
+.contact-list a:hover { padding-left: 10px; color: var(--orange); }
+.contact-list .anticon:first-child { color: var(--orange); font-size: 24px; }
+.contact-list span { display: grid; gap: 5px; }
+.contact-list small { color: var(--muted); font-size: 10px; letter-spacing: 0.17em; text-transform: uppercase; }
+
+@media (max-width: 850px) {
+  .contact-section { grid-template-columns: 1fr; gap: 28px; }
+}
+
+@media (max-width: 480px) {
+  .contact-list a { font-size: 14px; }
+}
+

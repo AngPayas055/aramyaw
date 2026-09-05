@@ -1,0 +1,13 @@
+.proof-strip { display: grid; grid-template-columns: repeat(3, 1fr); padding: 26px clamp(24px, 8vw, 128px); background: var(--orange); color: white; }
+.proof-strip div { display: flex; align-items: center; justify-content: center; gap: 16px; border-right: 1px solid #ffffff4d; }
+.proof-strip div:last-child { border: 0; }
+.proof-strip b { font-family: var(--font-display); font-size: 38px; }
+.proof-strip span { font-size: 11px; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; }
+
+@media (max-width: 850px) {
+  .proof-strip { padding-inline: 15px; }
+  .proof-strip div { flex-direction: column; gap: 7px; }
+  .proof-strip b { font-size: 28px; }
+  .proof-strip span { font-size: 8px; text-align: center; }
+}
+

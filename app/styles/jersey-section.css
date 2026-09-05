@@ -1,0 +1,18 @@
+.jersey-section { display: grid; grid-template-columns: 1fr 1fr; min-height: 650px; overflow: hidden; background: var(--ink); color: white; }
+.jersey-copy { align-self: center; padding: 100px clamp(24px, 8vw, 128px); padding-right: 60px; }
+.kicker.light { color: var(--gold); }
+.jersey-copy h2 { margin: 18px 0 30px; font-size: clamp(58px, 7vw, 96px); }
+.jersey-copy > p:not(.kicker) { max-width: 600px; margin-bottom: 32px; color: #bdb8af; font-size: 17px; line-height: 1.8; }
+.jersey-copy .ant-btn { height: 54px; padding-inline: 24px; font-weight: 800; }
+.jersey-art { position: relative; display: grid; place-content: center; min-height: 650px; overflow: hidden; background: radial-gradient(circle at 40% 46%, #f47d2e 0 12%, #c9421f 30%, #351510 72%); }
+.jersey-art::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(135deg, transparent 0 18px, #ffffff09 18px 20px); }
+.number { color: transparent; font-family: var(--font-display); font-size: clamp(190px, 28vw, 430px); line-height: 0.75; text-shadow: 16px 16px 0 #0005; transform: rotate(-7deg); -webkit-text-stroke: 3px #ffffff82; }
+.court-line { position: absolute; bottom: -120px; left: -160px; width: 330px; height: 330px; border: 3px solid #ffffff42; border-radius: 50%; }
+.ball-mark { position: absolute; top: 36px; right: 36px; display: grid; place-items: center; width: 76px; height: 76px; border: 2px solid var(--gold); border-radius: 50%; color: var(--gold); font-family: var(--font-display); font-size: 23px; }
+
+@media (max-width: 850px) {
+  .jersey-section { grid-template-columns: 1fr; }
+  .jersey-copy { padding: 78px 24px; }
+  .jersey-art { grid-row: 1; min-height: 380px; }
+}
+
