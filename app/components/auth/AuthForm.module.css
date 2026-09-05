@@ -1,0 +1,82 @@
+.form :global(.ant-form-item-label > label) {
+  height: auto;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.form :global(.ant-input-affix-wrapper),
+.form :global(.ant-input) {
+  font-size: 15px;
+}
+
+.form :global(.ant-input-affix-wrapper) {
+  min-height: 50px;
+  border-color: #d3cec4;
+  border-radius: 7px;
+  background: #fffefb;
+  box-shadow: none;
+}
+
+.form :global(.ant-input-affix-wrapper:hover),
+.form :global(.ant-input-affix-wrapper-focused) {
+  border-color: var(--orange);
+}
+
+.form :global(.ant-input-prefix) {
+  margin-right: 11px;
+  color: #9a948b;
+}
+
+.passwordLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.forgotLink,
+.switchText a {
+  color: var(--orange);
+  font-weight: 800;
+}
+
+.forgotLink {
+  font-size: 12px;
+}
+
+.submitButton {
+  height: 52px !important;
+  margin-top: 6px;
+  border-color: var(--orange) !important;
+  border-radius: 7px !important;
+  background: var(--orange) !important;
+  font-weight: 900 !important;
+  box-shadow: 0 8px 22px #f15a2430;
+}
+
+.submitButton:hover {
+  border-color: #ff7040 !important;
+  background: #ff7040 !important;
+}
+
+.switchText {
+  margin: 26px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.terms {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.terms a {
+  color: var(--ink);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
