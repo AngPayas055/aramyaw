@@ -6,7 +6,7 @@ export type RegisterPayload = {
   password: string;
 };
 
-export type RegisterUser = {
+export type AuthUser = {
   id: string;
   firstName: string;
   lastName: string;
@@ -18,5 +18,17 @@ export type RegisterUser = {
 export type RegisterResponse = {
   success: boolean;
   message: string;
-  user?: RegisterUser;
+  user?: AuthUser;
+};
+
+export type LoginPayload = {
+  email: string;
+  password: string;
+};
+
+export type LoginResponse = {
+  success: boolean;
+  message: string;
+  token: string;
+  user: AuthUser;
 };
