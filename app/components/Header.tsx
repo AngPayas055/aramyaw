@@ -1,13 +1,17 @@
 import Image from "next/image";
-import { Button } from "antd";
-import { PhoneOutlined } from "@ant-design/icons";
+import Link from "next/link";
+import {
+  LoginOutlined,
+  PhoneOutlined,
+  UserAddOutlined,
+} from "@ant-design/icons";
 
 const phone = "09977709400";
 
 export default function Header() {
   return (
     <header className="site-header">
-      <a className="brand" href="#top" aria-label="Aramyaw BallClub home">
+      <Link className="brand" href="/#top" aria-label="Aramyaw BallClub home">
         <Image
           src="/aramyaw-logo.png"
           alt="Aramyaw BallClub logo"
@@ -20,21 +24,34 @@ export default function Header() {
           <strong>ARAMYAW</strong>
           <small>BALLCLUB</small>
         </span>
-      </a>
+      </Link>
 
       <nav aria-label="Main navigation">
-        <a href="#leagues">Leagues</a>
-        <a href="#jerseys">Jerseys</a>
-        <a href="#contact">Contact</a>
+        <Link href="/#leagues">Leagues</Link>
+        <Link href="/#jerseys">Jerseys</Link>
+        <Link href="/#contact">Contact</Link>
       </nav>
 
-      <Button
-        type="primary"
-        href={`tel:${phone}`}
-        icon={<PhoneOutlined />}
-      >
-        Call us
-      </Button>
+      <div className="header-actions">
+        <a
+          className="phone-link"
+          href={`tel:${phone}`}
+          aria-label={`Call Aramyaw BallClub at ${phone}`}
+        >
+          <PhoneOutlined />
+          <span>Call us</span>
+        </a>
+
+        <Link className="signin-link" href="/signin">
+          <LoginOutlined />
+          <span>Sign in</span>
+        </Link>
+
+        <Link className="signup-link" href="/signup">
+          <UserAddOutlined />
+          <span>Register</span>
+        </Link>
+      </div>
     </header>
   );
 }
