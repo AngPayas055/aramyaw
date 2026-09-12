@@ -38,12 +38,16 @@ export default function SignInPage() {
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      console.log("User role:", data);
 
       messageApi.success(
         data.message || "Signed in successfully.",
       );
-
-      router.push("/");
+      if (data.user.role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/");
+      }
     } catch (error) {
       messageApi.error(
         error instanceof Error
