@@ -38,7 +38,6 @@ export default function SignInPage() {
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-      console.log("User role:", data);
 
       messageApi.success(
         data.message || "Signed in successfully.",
