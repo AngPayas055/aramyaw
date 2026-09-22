@@ -42,7 +42,7 @@ export default function Hero() {
           <Button
             type="primary"
             size="large"
-            href={`tel:${phone}`}
+            href="/join-league"
             icon={<TrophyOutlined />}
           >
             Join the next league

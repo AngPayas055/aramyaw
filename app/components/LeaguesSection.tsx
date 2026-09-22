@@ -12,6 +12,7 @@ import { getSeasons } from "@/services/season.service";
 import { getDivisions } from "@/services/division.service";
 import type { Season } from "@/types/season";
 import type { Division } from "@/types/division";
+import Link from "next/link";
 
 const seasonStatusLabels: Record<string, string> = {
   registration_open: "Registration Open",
@@ -200,28 +201,31 @@ export default function LeaguesSection() {
           {divisions.length > 0 ? (
             <div className="division-grid">
               {divisions.map((division, index) => (
-                <article
+                <Link
                   key={division._id}
-                  className={`division-card ${
-                    index === 0 ? "featured" : ""
-                  }`}
+                  href={`/join-league?divisionId=${division._id}`}
+                  className="division-card-link"
+                  aria-label={`Join the ${division.name} division`}
                 >
-                  <span>
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
+                  <article
+                    className={`division-card ${
+                      index === 0 ? "featured" : ""
+                    }`}
+                  >
+                    <span>{String(index + 1).padStart(2, "0")}</span>
 
-                  <TeamOutlined />
+                    <TeamOutlined />
 
-                  <div>
-                    <h3>{division.name}</h3>
-                    <p>{getDivisionDescription(division)}</p>
+                    <div>
+                      <h3>{division.name}</h3>
+                      <p>{getDivisionDescription(division)}</p>
 
-                    <small>
-                      {division.minPlayers}–{division.maxPlayers} players
-                      per team
-                    </small>
-                  </div>
-                </article>
+                      <small>
+                        {division.minPlayers}–{division.maxPlayers} players per team
+                      </small>
+                    </div>
+                  </article>
+                </Link>
               ))}
             </div>
           ) : (

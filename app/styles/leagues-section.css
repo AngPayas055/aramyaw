@@ -98,6 +98,28 @@
   color: #ff7875;
 }
 
+.division-card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.division-card-link:hover {
+  color: inherit;
+}
+
+.division-card {
+  height: 100%;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.division-card-link:hover .division-card {
+  transform: translateY(-4px);
+}
+
 @media (max-width: 850px) {
   .division-grid { grid-template-columns: 1fr; }
   .division-card { min-height: 240px; }
