@@ -86,13 +86,7 @@ export default function LeaguesSection() {
         setLoading(true);
         setError("");
 
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-          throw new Error("Authentication is required.");
-        }
-
-        const seasonsResponse = await getSeasons(token, {
+        const seasonsResponse = await getSeasons("", {
           page: 1,
           limit: 20,
         });
@@ -112,7 +106,7 @@ export default function LeaguesSection() {
 
         const divisionsResponse = await getDivisions(
           featuredSeason._id,
-          token,
+          "",
         );
 
         // Change `divisions` if your response uses `data`.
