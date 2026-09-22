@@ -6,9 +6,106 @@
 .division-card h3 { margin: 0 0 12px; font-family: var(--font-display); font-size: 40px; text-transform: uppercase; }
 .division-card p { margin: 0; color: #6d675e; line-height: 1.65; }
 .division-card.featured p { color: #bbb5ac; }
+.featured-season {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.featured-season h3 {
+  margin: 0.75rem 0 0.35rem;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.featured-season p {
+  margin: 0;
+  opacity: 0.7;
+}
+
+.season-status {
+  display: inline-flex;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.season-status-registration_open {
+  color: #07180d;
+  background: #72e294;
+}
+
+.season-status-ongoing {
+  color: #1a1202;
+  background: #f5b942;
+}
+
+.season-status-registration_closed {
+  color: #ffffff;
+  background: #d04a4a;
+}
+
+.season-status-completed {
+  color: #ffffff;
+  background: #666666;
+}
+
+.season-dates {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0.5rem;
+  opacity: 0.75;
+}
+
+.division-card small {
+  display: block;
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  opacity: 0.55;
+  text-transform: uppercase;
+}
+
+.league-state {
+  display: grid;
+  place-items: center;
+  gap: 0.75rem;
+  min-height: 220px;
+  padding: 2rem;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.league-state svg {
+  font-size: 2rem;
+}
+
+.league-state h3,
+.league-state p {
+  margin: 0;
+}
+
+.league-state-error {
+  color: #ff7875;
+}
 
 @media (max-width: 850px) {
   .division-grid { grid-template-columns: 1fr; }
   .division-card { min-height: 240px; }
 }
 
+@media (max-width: 768px) {
+  .featured-season {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
