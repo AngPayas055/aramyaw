@@ -19,9 +19,19 @@ export default function Footer() {
 
       <p>Ball game is unlimited.</p>
 
-      <small>
-        © {new Date().getFullYear()} Aramyaw BallClub. Est. 2018.
-      </small>
+      <small>© {new Date().getFullYear()} Aramyaw BallClub. Est. 2018.</small>
+
+      <p className="developer-credit">
+        Designed & developed by{" "}
+        <a
+          href="https://jmendiola.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <br />
+          Jhon Rey Mendiola ↗
+        </a>
+      </p>
     </footer>
   );
 }
