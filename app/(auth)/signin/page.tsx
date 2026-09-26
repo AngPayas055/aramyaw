@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -15,6 +15,7 @@ import AuthShell from "@/app/components/auth/AuthShell";
 import styles from "@/app/components/auth/AuthForm.module.css";
 
 import { loginUser } from "@/services/auth.service";
+import { getAuthRedirect } from "@/services/auth-redirect";
 
 type SignInValues = {
   email: string;
@@ -25,6 +26,14 @@ export default function SignInPage() {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
+  const [signupHref, setSignupHref] = useState("/signup");
+
+  useEffect(() => {
+    const redirect = new URLSearchParams(window.location.search).get("redirect");
+    if (redirect?.startsWith("/join-league")) {
+      setSignupHref(`/signup?redirect=${encodeURIComponent(redirect)}`);
+    }
+  }, []);
   const [messageApi, contextHolder] = message.useMessage();
 
   const handleSubmit = async (values: SignInValues) => {
@@ -42,11 +51,11 @@ export default function SignInPage() {
       messageApi.success(
         data.message || "Signed in successfully.",
       );
-      if (data.user.role === "admin") {
-        router.push("/admin");
-      } else {
-        router.push("/");
-      }
+      router.replace(
+        data.user.role === "admin"
+          ? "/admin"
+          : getAuthRedirect(window.location.search),
+      );
     } catch (error) {
       messageApi.error(
         error instanceof Error
@@ -139,7 +148,7 @@ export default function SignInPage() {
 
         <p className={styles.switchText}>
           New to Aramyaw?{" "}
-          <Link href="/signup">Create an account</Link>
+          <Link href={signupHref}>Create an account</Link>
         </p>
       </AuthShell>
     </>
