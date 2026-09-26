@@ -50,9 +50,11 @@ export default function SignUpPage() {
         data.message || "Account created successfully.",
       );
 
-      setTimeout(() => {
-        router.push("/signin");
-      }, 1000);
+      const redirect = new URLSearchParams(window.location.search).get("redirect");
+      const signInUrl = redirect?.startsWith("/join-league")
+        ? `/signin?redirect=${encodeURIComponent(redirect)}`
+        : "/signin";
+      router.replace(signInUrl);
     } catch (error) {
       messageApi.error(
         error instanceof Error
