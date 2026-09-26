@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -26,15 +26,15 @@ export default function SignInPage() {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
-  const [signupHref, setSignupHref] = useState("/signup");
-
-  useEffect(() => {
-    const redirect = new URLSearchParams(window.location.search).get("redirect");
-    if (redirect?.startsWith("/join-league")) {
-      setSignupHref(`/signup?redirect=${encodeURIComponent(redirect)}`);
-    }
-  }, []);
   const [messageApi, contextHolder] = message.useMessage();
+
+  const handleSignUp = (event: MouseEvent<HTMLAnchorElement>) => {
+    const destination = getAuthRedirect(window.location.search);
+    if (destination === "/manager") return;
+
+    event.preventDefault();
+    router.push(`/signup?redirect=${encodeURIComponent(destination)}`);
+  };
 
   const handleSubmit = async (values: SignInValues) => {
     try {
@@ -148,7 +148,9 @@ export default function SignInPage() {
 
         <p className={styles.switchText}>
           New to Aramyaw?{" "}
-          <Link href={signupHref}>Create an account</Link>
+          <Link href="/signup" onClick={handleSignUp}>
+            Create an account
+          </Link>
         </p>
       </AuthShell>
     </>
