@@ -214,7 +214,7 @@ export default function JoinLeaguePage() {
                   Sign in to continue
                 </Button>,
 
-                <Link key="signup" href="/signup">
+                <Link key="signup" href="/signup?redirect=%2Fjoin-league">
                   <Button size="large">
                     Create an account
                   </Button>
