@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createTeam } from "@/services/team.service";
@@ -35,6 +35,7 @@ import { getSeasons } from "@/services/season.service";
 import { getDivisions } from "@/services/division.service";
 import type { Season } from "@/types/season";
 import type { Division } from "@/types/division";
+import { AuthUser } from "@/types/auth";
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -52,10 +53,27 @@ interface TeamRegistrationValues {
   acceptedTerms: boolean;
 }
 
+function subscribeToUser(onChange: () => void) {
+  window.addEventListener("storage", onChange);
+  window.addEventListener("auth-change", onChange);
+
+  return () => {
+    window.removeEventListener("storage", onChange);
+    window.removeEventListener("auth-change", onChange);
+  };
+}
+
+function getSavedUser() {
+  return localStorage.getItem("user");
+}
+
+function getServerUser() {
+  return null;
+}
+
 export default function JoinLeaguePage() {
   const router = useRouter();
   const [form] = Form.useForm<TeamRegistrationValues>();
-
   const [season, setSeason] = useState<Season | null>(null);
   const [divisions, setDivisions] = useState<Division[]>([]);
   const [loading, setLoading] = useState(true);
@@ -119,6 +137,29 @@ export default function JoinLeaguePage() {
 
     void loadRegistrationDetails();
   }, []);
+
+  const savedUser = useSyncExternalStore(
+    subscribeToUser,
+    getSavedUser,
+    getServerUser,
+  );
+
+  const initialCoachValues = useMemo(() => {
+    if (!savedUser) return {};
+
+    try {
+      const user = JSON.parse(savedUser) as AuthUser;
+
+      return {
+        coachFirstName: user.firstName,
+        coachLastName: user.lastName,
+        coachEmail: user.email,
+        coachContactNumber: user.contactNumber,
+      };
+    } catch {
+      return {};
+    }
+  }, [savedUser]);
 
   const selectedDivisionId = Form.useWatch("divisionId", form);
 
@@ -350,6 +391,7 @@ export default function JoinLeaguePage() {
 
         <Form<TeamRegistrationValues>
           form={form}
+          initialValues={initialCoachValues}
           layout="vertical"
           requiredMark="optional"
           onFinish={handleSubmit}
