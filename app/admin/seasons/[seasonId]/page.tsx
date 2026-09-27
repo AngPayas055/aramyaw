@@ -184,7 +184,7 @@ export default function SeasonDivisionsPage() {
         description: values.description?.trim() ?? "",
         minAge: values.minAge ?? null,
         maxAge: values.maxAge ?? null,
-        ageCutoffDate: values.ageCutoffDate?.toISOString() ?? null,
+        ageCutoffDate: values.ageCutoffDate?.format("YYYY-MM-DD") ?? null,
         maxTeams: values.maxTeams,
         minPlayers: values.minPlayers,
         maxPlayers: values.maxPlayers,
