@@ -19,6 +19,22 @@ function label(value: Team["season"] | Team["division"]): string {
   return typeof value === "string" ? value : value.name;
 }
 
+type DivisionDetails = {
+  name: string;
+  minAge?: number;
+  maxAge?: number;
+  minPlayers?: number;
+  maxPlayers?: number;
+};
+
+function getDivisionDetails(
+  division: Team["division"],
+): DivisionDetails | null {
+  return typeof division === "string"
+    ? null
+    : (division as DivisionDetails);
+}
+
 export default function ManagerPage() {
   const router = useRouter();
   const [teams, setTeams] = useState<Team[]>([]);
@@ -117,40 +133,58 @@ export default function ManagerPage() {
             <Empty description="You haven't registered a team yet." />
           ) : (
             <div className="flex flex-col gap-4">
-              {teams.map((team) => (
-                <Card key={team._id} size="small">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <Text strong className="block">
-                        {team.name}
-                      </Text>
-                      <Text type="secondary">
-                        {label(team.season)} · {label(team.division)} ·{" "}
-                        {team.barangay}
-                      </Text>
+              {teams.map((team) => {
+                const division = getDivisionDetails(team.division);
+
+                return (
+                  <Card key={team._id} size="small">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <Text strong className="block">
+                          {team.name}
+                        </Text>
+                        <Text type="secondary">
+                          {label(team.season)} · {label(team.division)} · {team.barangay}
+                        </Text>
+
+                        {division && (
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            {division.minAge != null && division.maxAge != null && (
+                              <Tag>
+                                Ages {division.minAge}–{division.maxAge}
+                              </Tag>
+                            )}
+                            {division.minPlayers != null &&
+                              division.maxPlayers != null && (
+                                <Tag>
+                                  {division.minPlayers}–{division.maxPlayers} players
+                                </Tag>
+                              )}
+                          </div>
+                        )}
+                      </div>
+
+                      <Tag
+                        color={
+                          team.status === "approved"
+                            ? "green"
+                            : team.status === "rejected"
+                              ? "red"
+                              : "orange"
+                        }
+                      >
+                        {team.status.toUpperCase()}
+                      </Tag>
                     </div>
 
-                    <Tag
-                      color={
-                        team.status === "approved"
-                          ? "green"
-                          : team.status === "rejected"
-                            ? "red"
-                            : "orange"
-                      }
-                    >
-                      {team.status.toUpperCase()}
-                    </Tag>
-                  </div>
-
-                  {team.status === "rejected" &&
-                    team.rejectionReason && (
+                    {team.status === "rejected" && team.rejectionReason && (
                       <Paragraph className="mb-0 mt-3" type="danger">
                         Reason: {team.rejectionReason}
                       </Paragraph>
                     )}
-                </Card>
-              ))}
+                  </Card>
+                );
+              })}
             </div>
           )}
         </Card>
