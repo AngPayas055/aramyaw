@@ -3,11 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { createTeam } from "@/services/team.service";
 import { Alert } from "antd";
 import {
   ArrowLeftOutlined,
   CalendarOutlined,
-  CheckCircleOutlined,
   LoadingOutlined,
   LockOutlined,
   TeamOutlined,
@@ -136,30 +136,23 @@ export default function JoinLeaguePage() {
   }
 
   async function handleSubmit(values: TeamRegistrationValues) {
+    if (!season) return;
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      handleSignIn();
+      return;
+    }
+
     try {
       setSubmitting(true);
       setError("");
 
-      /*
-       * We will replace this with:
-       *
-       * await createTeamRegistration(
-       *   season._id,
-       *   values,
-       *   token,
-       * );
-       */
-
-      console.log({
-        seasonId: season?._id,
-        ...values,
-      });
+      await createTeam(season._id, values, token);
 
       setSubmitted(true);
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       setError(
         error instanceof Error
@@ -261,13 +254,13 @@ export default function JoinLeaguePage() {
         <div className="join-league-container">
           <Card className="join-state-card">
             <Result
-              status="info"
-              title="Registration is still warming up 🏀"
-              subTitle="This page is still under development. Our system is practicing its free throws before accepting official team registrations."
+              status="success"
+              title="Team registration submitted 🏀"
+              subTitle={`Your registration for ${season.name} is pending review. You can check its status on your manager dashboard.`}
               extra={
-                <Link href="/">
+                <Link href="/manager">
                   <Button type="primary" size="large">
-                    Return to home
+                    View my teams
                   </Button>
                 </Link>
               }
@@ -400,27 +393,22 @@ export default function JoinLeaguePage() {
                 type="info"
                 showIcon
                 icon={<TeamOutlined />}
-                message={selectedDivision.name}
+                title={selectedDivision.name}
                 description={
-                  <Space direction="vertical" size={2}>
+                  <Space orientation="vertical" size={2}>
                     {selectedDivision.description && (
-                      <Text>
-                        {selectedDivision.description}
-                      </Text>
+                      <Text>{selectedDivision.description}</Text>
                     )}
 
                     <Text type="secondary">
-                      Roster requirement:{" "}
-                      {selectedDivision.minPlayers}–
+                      Roster requirement: {selectedDivision.minPlayers}–
                       {selectedDivision.maxPlayers} players
                     </Text>
 
                     {selectedDivision.ageCutoffDate && (
                       <Text type="secondary">
                         Age cutoff:{" "}
-                        {dayjs(
-                          selectedDivision.ageCutoffDate,
-                        ).format("MMMM D, YYYY")}
+                        {dayjs(selectedDivision.ageCutoffDate).format("MMMM D, YYYY")}
                       </Text>
                     )}
                   </Space>

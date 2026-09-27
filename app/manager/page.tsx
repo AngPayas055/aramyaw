@@ -1,14 +1,71 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Button, Card, Typography } from "antd";
-import { ArrowRightOutlined, LogoutOutlined, TeamOutlined } from "@ant-design/icons";
+import { Alert, Button, Card, Empty, Spin, Tag, Typography } from "antd";
+import {
+  ArrowRightOutlined,
+  LogoutOutlined,
+  TeamOutlined,
+} from "@ant-design/icons";
+
+import { getSeasons } from "@/services/season.service";
+import { getMyTeams, type Team } from "@/services/team.service";
 
 const { Title, Text, Paragraph } = Typography;
 
+function label(value: Team["season"] | Team["division"]): string {
+  return typeof value === "string" ? value : value.name;
+}
+
 export default function ManagerPage() {
   const router = useRouter();
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function loadTeams() {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        router.replace("/signin");
+        return;
+      }
+
+      try {
+        const seasonsResponse = await getSeasons(token, {
+          page: 1,
+          limit: 100,
+        });
+
+        const results = await Promise.all(
+          seasonsResponse.seasons.map((season) =>
+            getMyTeams(season._id, token),
+          ),
+        );
+
+        setTeams(
+          results
+            .flatMap((result) => result.teams)
+            .sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime(),
+            ),
+        );
+      } catch (cause) {
+        setError(
+          cause instanceof Error ? cause.message : "Failed to load your teams.",
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    void loadTeams();
+  }, [router]);
 
   function handleSignOut() {
     localStorage.removeItem("token");
@@ -31,7 +88,7 @@ export default function ManagerPage() {
 
         <Title level={2}>Manager dashboard</Title>
         <Paragraph type="secondary">
-          Join an open league and manage your team registration here.
+          Join an open league and manage your team registrations here.
         </Paragraph>
 
         <Card className="mt-8">
@@ -52,9 +109,50 @@ export default function ManagerPage() {
         </Card>
 
         <Card className="mt-4" title="My teams">
-          <Text type="secondary">
-            Team registrations will appear here when registration goes live.
-          </Text>
+          {loading ? (
+            <Spin />
+          ) : error ? (
+            <Alert type="error" showIcon title={error} />
+          ) : teams.length === 0 ? (
+            <Empty description="You haven't registered a team yet." />
+          ) : (
+            <div className="flex flex-col gap-4">
+              {teams.map((team) => (
+                <Card key={team._id} size="small">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <Text strong className="block">
+                        {team.name}
+                      </Text>
+                      <Text type="secondary">
+                        {label(team.season)} · {label(team.division)} ·{" "}
+                        {team.barangay}
+                      </Text>
+                    </div>
+
+                    <Tag
+                      color={
+                        team.status === "approved"
+                          ? "green"
+                          : team.status === "rejected"
+                            ? "red"
+                            : "orange"
+                      }
+                    >
+                      {team.status.toUpperCase()}
+                    </Tag>
+                  </div>
+
+                  {team.status === "rejected" &&
+                    team.rejectionReason && (
+                      <Paragraph className="mb-0 mt-3" type="danger">
+                        Reason: {team.rejectionReason}
+                      </Paragraph>
+                    )}
+                </Card>
+              ))}
+            </div>
+          )}
         </Card>
       </div>
     </main>
