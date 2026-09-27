@@ -24,6 +24,24 @@ export interface CreateTeamPayload {
   acceptedTerms: boolean;
 }
 
+export interface AdminTeam extends Team {
+  coach: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    contactNumber: string;
+  };
+  assistantCoach?: string;
+  notes?: string;
+  manager: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    contactNumber: string;
+  };
+}
+
 export async function createTeam(
   seasonId: string,
   payload: CreateTeamPayload,
@@ -66,6 +84,77 @@ export async function getMyTeams(
 
   if (!response.ok) {
     throw new Error(data.message || "Failed to load your teams.");
+  }
+
+  return data;
+}
+
+export interface AdminTeam extends Team {
+  coach: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    contactNumber: string;
+  };
+  assistantCoach?: string;
+  notes?: string;
+  manager: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    contactNumber: string;
+  };
+}
+
+export async function getSeasonTeams(
+  seasonId: string,
+  token: string,
+): Promise<{ teams: AdminTeam[] }> {
+  const response = await fetch(
+    apiUrl(`/api/seasons/${encodeURIComponent(seasonId)}/teams`),
+    {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to load team registrations.");
+  }
+
+  return data;
+}
+
+export async function reviewTeam(
+  seasonId: string,
+  teamId: string,
+  payload: {
+    status: "approved" | "rejected";
+    rejectionReason?: string;
+  },
+  token: string,
+): Promise<{ message: string; team: AdminTeam }> {
+  const response = await fetch(
+    apiUrl(
+      `/api/seasons/${encodeURIComponent(seasonId)}/teams/${encodeURIComponent(teamId)}/review`,
+    ),
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to review team registration.");
   }
 
   return data;
