@@ -177,6 +177,15 @@ export default function ManagerPage() {
                       </Tag>
                     </div>
 
+                    <Link
+                      href={`/manager/teams/${team._id}`}
+                      className="mt-3 inline-block"
+                    >
+                      <Button size="small" icon={<ArrowRightOutlined />}>
+                        View team & players
+                      </Button>
+                    </Link>
+
                     {team.status === "rejected" && team.rejectionReason && (
                       <Paragraph className="mb-0 mt-3" type="danger">
                         Reason: {team.rejectionReason}

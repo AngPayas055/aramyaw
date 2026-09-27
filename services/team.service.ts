@@ -7,7 +7,19 @@ export interface Team {
   status: "pending" | "approved" | "rejected";
   rejectionReason?: string;
   season: string | { _id: string; name: string; status: string };
-  division: string | { _id: string; name: string };
+  division:
+  | string
+  | {
+      _id: string;
+      name: string;
+      description?: string;
+      minAge?: number;
+      maxAge?: number;
+      ageCutoffDate?: string;
+      minPlayers?: number;
+      maxPlayers?: number;
+      registrationFeeCentavos?: number;
+    };
   createdAt: string;
 }
 
@@ -158,4 +170,94 @@ export async function reviewTeam(
   }
 
   return data;
+}
+export interface Player {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  birthDate: string;
+  jerseyNumber?: number;
+}
+
+export type PlayerInput = Omit<Player, "_id">;
+
+function playerPath(seasonId: string, teamId: string) {
+  return `/api/seasons/${encodeURIComponent(seasonId)}/teams/${encodeURIComponent(teamId)}/players`;
+}
+
+async function playerRequest<T>(
+  path: string,
+  token: string,
+  method = "GET",
+  body?: PlayerInput,
+): Promise<T> {
+  const response = await fetch(apiUrl(path), {
+    method,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      ...(body ? { "Content-Type": "application/json" } : {}),
+    },
+    body: body ? JSON.stringify(body) : undefined,
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.message || "Could not save player.");
+  }
+
+  return response.json();
+}
+
+export function getPlayers(
+  seasonId: string,
+  teamId: string,
+  token: string,
+) {
+  return playerRequest<{ players: Player[] }>(
+    playerPath(seasonId, teamId),
+    token,
+  );
+}
+
+export function addPlayer(
+  seasonId: string,
+  teamId: string,
+  token: string,
+  input: PlayerInput,
+) {
+  return playerRequest<{ player: Player }>(
+    playerPath(seasonId, teamId),
+    token,
+    "POST",
+    input,
+  );
+}
+
+export function editPlayer(
+  seasonId: string,
+  teamId: string,
+  playerId: string,
+  token: string,
+  input: PlayerInput,
+) {
+  return playerRequest<{ player: Player }>(
+    `${playerPath(seasonId, teamId)}/${encodeURIComponent(playerId)}`,
+    token,
+    "PATCH",
+    input,
+  );
+}
+
+export function removePlayer(
+  seasonId: string,
+  teamId: string,
+  playerId: string,
+  token: string,
+) {
+  return playerRequest<{ message: string }>(
+    `${playerPath(seasonId, teamId)}/${encodeURIComponent(playerId)}`,
+    token,
+    "DELETE",
+  );
 }
