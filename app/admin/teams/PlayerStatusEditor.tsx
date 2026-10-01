@@ -110,7 +110,7 @@ export default function PlayerStatusEditor({
         confirmLoading={saving}
         cancelButtonProps={{ disabled: saving }}
         closable={!saving}
-        maskClosable={!saving}
+        mask={{ closable: !saving }}
         keyboard={!saving}
         onOk={() => void saveStatus()}
         onCancel={() => {
