@@ -29,6 +29,7 @@ import {
   type PlayerInput,
   type Team,
 } from "@/services/team.service";
+import PlayerStatusBadges from "@/app/components/PlayerStatusBadges";
 
 const { Title, Text } = Typography;
 
@@ -378,12 +379,22 @@ export default function TeamDetailsPage() {
                             ? ` · #${player.jerseyNumber}`
                             : ""}
                         </Text>
+                        <div className="mt-2">
+                          <PlayerStatusBadges
+                            player={player}
+                            teamApproved={team.status === "approved"}
+                          />
+                        </div>
                       </div>
 
                       <div className="flex gap-2">
                         <Button
                           size="small"
                           onClick={() => openPlayerForm(player)}
+                          disabled={
+                            player.playingStatus === "suspended" ||
+                            player.playingStatus === "banned"
+                          }
                         >
                           Edit
                         </Button>
@@ -392,6 +403,10 @@ export default function TeamDetailsPage() {
                           title="Remove this player?"
                           onConfirm={() =>
                             void deletePlayer(player._id)
+                          }
+                          disabled={
+                            player.playingStatus === "suspended" ||
+                            player.playingStatus === "banned"
                           }
                         >
                           <Button size="small" danger>

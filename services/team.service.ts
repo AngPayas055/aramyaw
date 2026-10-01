@@ -171,15 +171,36 @@ export async function reviewTeam(
 
   return data;
 }
+export type VerificationStatus = "unverified" | "verified";
+export type PlayingStatus = "allowed" | "suspended" | "banned";
+
 export interface Player {
   _id: string;
   firstName: string;
   lastName: string;
   birthDate: string;
   jerseyNumber?: number;
+  verificationStatus?: VerificationStatus;
+  playingStatus?: PlayingStatus;
+  statusReason?: string;
+  suspensionUntil?: string;
+  verifiedBy?: string;
+  verifiedAt?: string;
+  statusUpdatedBy?: string;
+  statusUpdatedAt?: string;
 }
 
-export type PlayerInput = Omit<Player, "_id">;
+export type PlayerInput = Pick<
+  Player,
+  "firstName" | "lastName" | "birthDate" | "jerseyNumber"
+>;
+
+export interface PlayerStatusInput {
+  verificationStatus: VerificationStatus;
+  playingStatus: PlayingStatus;
+  statusReason?: string;
+  suspensionUntil?: string;
+}
 
 function playerPath(seasonId: string, teamId: string) {
   return `/api/seasons/${encodeURIComponent(seasonId)}/teams/${encodeURIComponent(teamId)}/players`;
@@ -189,7 +210,7 @@ async function playerRequest<T>(
   path: string,
   token: string,
   method = "GET",
-  body?: PlayerInput,
+  body?: PlayerInput | PlayerStatusInput,
 ): Promise<T> {
   const response = await fetch(apiUrl(path), {
     method,
@@ -207,6 +228,21 @@ async function playerRequest<T>(
   }
 
   return response.json();
+}
+
+export function updatePlayerStatus(
+  seasonId: string,
+  teamId: string,
+  playerId: string,
+  token: string,
+  input: PlayerStatusInput,
+) {
+  return playerRequest<{ message: string; player: Player }>(
+    `${playerPath(seasonId, teamId)}/${encodeURIComponent(playerId)}/status`,
+    token,
+    "PATCH",
+    input,
+  );
 }
 
 export function getPlayers(

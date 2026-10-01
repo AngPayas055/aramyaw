@@ -16,6 +16,8 @@ import {
   type AdminTeam,
   type Player,
 } from "@/services/team.service";
+import PlayerStatusBadges from "@/app/components/PlayerStatusBadges";
+import PlayerStatusEditor from "./PlayerStatusEditor";
 
 const { Title } = Typography;
 
@@ -200,7 +202,7 @@ export default function TeamDetailsModal({
           loading={loading}
           pagination={false}
           size="small"
-          scroll={{ x: 450 }}
+          scroll={{ x: 850 }}
           locale={{ emptyText: "No players added yet." }}
           columns={[
             {
@@ -222,6 +224,36 @@ export default function TeamDetailsModal({
               width: 150,
               render: (date: string) =>
                 dayjs(date).format("MMM D, YYYY"),
+            },
+            {
+              title: "Status",
+              key: "status",
+              width: 260,
+              render: (_, player) => (
+                <PlayerStatusBadges
+                  player={player}
+                  teamApproved={team.status === "approved"}
+                />
+              ),
+            },
+            {
+              title: "Action",
+              key: "action",
+              width: 130,
+              render: (_, player) => (
+                <PlayerStatusEditor
+                  player={player}
+                  seasonId={seasonId}
+                  teamId={team._id}
+                  onSaved={(updated) => {
+                    setPlayers((current) =>
+                      current.map((item) =>
+                        item._id === updated._id ? updated : item,
+                      ),
+                    );
+                  }}
+                />
+              ),
             },
           ]}
         />
