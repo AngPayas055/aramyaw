@@ -16,7 +16,7 @@ import {
   message,
 } from "antd";
 import dayjs from "dayjs";
-
+import TeamDetailsModal from "./TeamDetailsModal";
 import { getSeasons } from "@/services/season.service";
 import {
   getSeasonTeams,
@@ -40,6 +40,8 @@ export default function AdminTeamsPage() {
   const [rejectionReason, setRejectionReason] = useState("");
   const [messageApi, contextHolder] = message.useMessage();
   const [divisionId, setDivisionId] = useState<string>("all");
+  const [selectedTeam, setSelectedTeam] =
+  useState<AdminTeam | null>(null);
 
   useEffect(() => {
     async function loadSeasons() {
@@ -188,6 +190,7 @@ export default function AdminTeamsPage() {
             className="mt-2 w-full"
             value={seasonId}
             onChange={(value) => {
+              setSelectedTeam(null);
               setSeasonId(value);
               setDivisionId("all");
             }}
@@ -226,7 +229,14 @@ export default function AdminTeamsPage() {
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <Title level={4} className="mb-1!">
-                    {team.name}
+                    <button
+                      type="button"
+                      className="cursor-pointer text-left hover:text-[#f15a24] hover:underline"
+                      onClick={() => setSelectedTeam(team)}
+                      aria-label={`View details and players for ${team.name}`}
+                    >
+                      {team.name}
+                    </button>
                   </Title>
                   <Text type="secondary">
                     {typeof team.division === "string"
@@ -313,7 +323,14 @@ export default function AdminTeamsPage() {
           ))}
         </div>
       )}
-
+      {selectedTeam && seasonId && (
+        <TeamDetailsModal
+          key={`${seasonId}:${selectedTeam._id}`}
+          team={selectedTeam}
+          seasonId={seasonId}
+          onClose={() => setSelectedTeam(null)}
+        />
+      )}
       <Modal
         title={`Reject ${rejectingTeam?.name ?? "team"}?`}
         open={Boolean(rejectingTeam)}

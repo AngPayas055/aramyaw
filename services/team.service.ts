@@ -261,3 +261,14 @@ export function removePlayer(
     "DELETE",
   );
 }
+
+export function getAdminTeamPlayers(
+  seasonId: string,
+  teamId: string,
+  token: string,
+) {
+  return playerRequest<{ players: Player[] }>(
+    `/api/seasons/${encodeURIComponent(seasonId)}/teams/${encodeURIComponent(teamId)}/roster`,
+    token,
+  );
+}
