@@ -88,6 +88,15 @@ export default function TeamDetailsModal({
       ? team.season
       : team.season.name;
 
+  const fullRowSpan = {
+    xs: 1,
+    sm: 2,
+    md: 2,
+    lg: 2,
+    xl: 2,
+    xxl: 2,
+  };
+
   return (
     <Modal
       title={team.name}
@@ -99,7 +108,14 @@ export default function TeamDetailsModal({
       <Descriptions
         bordered
         size="small"
-        column={{ xs: 1, sm: 2 }}
+        column={{
+          xs: 1,
+          sm: 2,
+          md: 2,
+          lg: 2,
+          xl: 2,
+          xxl: 2,
+        }}
         items={[
           {
             key: "season",
@@ -147,7 +163,7 @@ export default function TeamDetailsModal({
             key: "email",
             label: "Coach email",
             children: team.coach.email,
-            span: 2,
+            span: fullRowSpan,
           },
           {
             key: "manager",
@@ -166,7 +182,7 @@ export default function TeamDetailsModal({
                 key: "assistant",
                 label: "Assistant coach",
                 children: team.assistantCoach,
-                span: 2,
+                span: fullRowSpan,
               }]
             : []),
           ...(team.notes
@@ -174,7 +190,7 @@ export default function TeamDetailsModal({
                 key: "notes",
                 label: "Notes",
                 children: team.notes,
-                span: 2,
+                span: fullRowSpan,
               }]
             : []),
         ]}
