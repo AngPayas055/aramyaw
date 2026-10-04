@@ -196,7 +196,7 @@ export default function SeasonsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl p-4 sm:p-6">
+    <div className="mx-auto w-full min-w-0 max-w-7xl p-4 sm:p-6">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <Title level={2} className="mb-1!">
@@ -238,12 +238,16 @@ export default function SeasonsPage() {
         />
       )}
 
-      <Card>
+      <Card
+        className="min-w-0 overflow-hidden"
+        styles={{ body: { padding: 12, minWidth: 0 } }}
+      >
         <Table<Season>
           rowKey="_id"
           loading={loading}
           dataSource={result?.seasons ?? []}
-          scroll={{ x: 850 }}
+          tableLayout="fixed"
+          scroll={{ x: 1100 }}
           pagination={{
             current: page,
             pageSize: 10,
