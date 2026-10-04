@@ -254,7 +254,7 @@ export default function SeasonDivisionsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl p-4 sm:p-6">
+    <div className="mx-auto w-full min-w-0 max-w-7xl p-4 sm:p-6">
       <Link href="/admin/seasons">← Back to Seasons</Link>
 
       <div className="mb-6 mt-4 flex flex-wrap items-center justify-between gap-4">
@@ -298,7 +298,11 @@ export default function SeasonDivisionsPage() {
         />
       )}
 
-      <Card className="mb-6">
+      <Card 
+        title="Divisions"
+        className="min-w-0 overflow-hidden"
+        styles={{ body: { padding: 12, minWidth: 0 } }}
+        >
         <Descriptions
           column={{ xs: 1, sm: 2 }}
           items={[
@@ -339,7 +343,8 @@ export default function SeasonDivisionsPage() {
           rowKey="_id"
           loading={loading}
           dataSource={data.divisions}
-          scroll={{ x: 850 }}
+          tableLayout="fixed"
+          scroll={{ x: 1200 }}
           pagination={false}
           locale={{
             emptyText: "No divisions yet. Add your first division.",
