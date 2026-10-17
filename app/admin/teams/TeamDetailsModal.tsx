@@ -10,7 +10,7 @@ import {
   Typography,
 } from "antd";
 import dayjs from "dayjs";
-
+import TeamPaymentPanel from "@/app/components/TeamPaymentPanel";
 import {
   getAdminTeamPlayers,
   type AdminTeam,
@@ -204,7 +204,12 @@ export default function TeamDetailsModal({
           title={`Rejection reason: ${team.rejectionReason}`}
         />
       )}
-
+      <TeamPaymentPanel
+        seasonId={seasonId}
+        teamId={team._id}
+        teamStatus={team.status}
+        admin
+      />
       <Title level={5} className="mb-3! mt-6!">
         Players{!loading && !error ? ` (${players.length})` : ""}
       </Title>

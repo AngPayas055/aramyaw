@@ -1,5 +1,5 @@
 "use client";
-
+import TeamPaymentPanel from "@/app/components/TeamPaymentPanel";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -284,7 +284,11 @@ export default function TeamDetailsPage() {
                 </p>
               )}
             </Card>
-
+            <TeamPaymentPanel
+              seasonId={seasonId}
+              teamId={team._id}
+              teamStatus={team.status}
+            />
             <Card title="Division rules" className="mb-4">
               <div className="flex flex-wrap gap-2">
                 {division?.minAge != null ||
