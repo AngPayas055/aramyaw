@@ -15,7 +15,7 @@ import {
   Tag,
   Typography,
 } from "antd";
-
+import { PAYMENTS_CHANGED } from "@/services/admin-payment.service";
 import {
   getTeamPayments,
   submitTeamPayment,
@@ -248,6 +248,8 @@ function PaymentPanelContent({
 
       setRejectionReason("");
       setSuccess(result.message);
+
+      window.dispatchEvent(new Event(PAYMENTS_CHANGED));
     } catch (cause) {
       setError(errorMessage(cause));
     } finally {

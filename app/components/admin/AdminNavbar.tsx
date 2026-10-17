@@ -1,5 +1,5 @@
 "use client";
-
+import PaymentNavLabel from "./PaymentNavLabel";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button, Menu } from "antd";
@@ -31,6 +31,10 @@ const items = [
     key: "/admin/players",
     icon: <UserOutlined />,
     label: <Link href="/admin/players">Players</Link>,
+  },
+  {
+    key: "/admin/payments",
+    label: <PaymentNavLabel />,
   },
 ];
 
