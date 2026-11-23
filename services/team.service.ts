@@ -1,4 +1,5 @@
 import { apiUrl } from "./api";
+import type { TeamPayments } from "./payment.service";
 
 export interface Team {
   _id: string;
@@ -37,6 +38,7 @@ export interface CreateTeamPayload {
 }
 
 export interface AdminTeam extends Team {
+  paymentStatus?: TeamPayments["paymentStatus"] | null;
   coach: {
     firstName: string;
     lastName: string;
@@ -102,6 +104,7 @@ export async function getMyTeams(
 }
 
 export interface AdminTeam extends Team {
+  paymentStatus?: TeamPayments["paymentStatus"] | null;
   coach: {
     firstName: string;
     lastName: string;

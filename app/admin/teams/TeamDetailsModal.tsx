@@ -25,12 +25,14 @@ type Props = {
   team: AdminTeam;
   seasonId: string;
   onClose: () => void;
+  onPaymentReviewed?: (status: "paid" | "rejected") => void;
 };
 
 export default function TeamDetailsModal({
   team,
   seasonId,
   onClose,
+  onPaymentReviewed,
 }: Props) {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
@@ -209,6 +211,7 @@ export default function TeamDetailsModal({
         teamId={team._id}
         teamStatus={team.status}
         admin
+        onPaymentReviewed={onPaymentReviewed}
       />
       <Title level={5} className="mb-3! mt-6!">
         Players{!loading && !error ? ` (${players.length})` : ""}

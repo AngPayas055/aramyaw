@@ -12,9 +12,9 @@ import {
   Select,
   Space,
   Spin,
-  Tag,
   Typography,
 } from "antd";
+import TeamPaymentStatusTag from "./TeamPaymentStatusTag";
 import { PAYMENTS_CHANGED } from "@/services/admin-payment.service";
 import {
   getTeamPayments,
@@ -31,28 +31,13 @@ type Props = {
   teamId: string;
   teamStatus: "pending" | "approved" | "rejected";
   admin?: boolean;
+  onPaymentReviewed?: (status: "paid" | "rejected") => void;
 };
 
 type PaymentFormValues = {
   method: PaymentMethod;
   referenceNumber: string;
   paidAt: string;
-};
-
-const labels = {
-  unpaid: "Unpaid",
-  pending: "For verification",
-  paid: "Paid",
-  rejected: "Rejected",
-  not_required: "No payment required",
-};
-
-const colors = {
-  unpaid: "default",
-  pending: "orange",
-  paid: "green",
-  rejected: "red",
-  not_required: "blue",
 };
 
 function money(centavos: number) {
@@ -101,6 +86,7 @@ function PaymentPanelContent({
   teamId,
   teamStatus,
   admin = false,
+  onPaymentReviewed,
 }: Props) {
   const [form] = Form.useForm<PaymentFormValues>();
 
@@ -249,6 +235,7 @@ function PaymentPanelContent({
       setRejectionReason("");
       setSuccess(result.message);
 
+      onPaymentReviewed?.(status);
       window.dispatchEvent(new Event(PAYMENTS_CHANGED));
     } catch (cause) {
       setError(errorMessage(cause));
@@ -296,9 +283,7 @@ function PaymentPanelContent({
                 Registration fee: {money(data.amountDueCentavos)}
               </Text>
               <div className="mt-2">
-                <Tag color={colors[data.paymentStatus]}>
-                  {labels[data.paymentStatus]}
-                </Tag>
+                <TeamPaymentStatusTag status={data.paymentStatus} />
               </div>
             </div>
 
@@ -473,9 +458,7 @@ function PaymentPanelContent({
                     key={payment._id}
                     className="mt-3 rounded-lg border border-gray-200 p-3"
                   >
-                    <Tag color={colors[payment.status]}>
-                      {labels[payment.status]}
-                    </Tag>
+                    <TeamPaymentStatusTag status={payment.status} />
 
                     <Descriptions
                       size="small"

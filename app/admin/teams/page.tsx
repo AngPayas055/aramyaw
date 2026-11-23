@@ -16,6 +16,7 @@ import {
   message,
 } from "antd";
 import dayjs from "dayjs";
+import TeamPaymentStatusTag from "@/app/components/TeamPaymentStatusTag";
 import TeamDetailsModal from "./TeamDetailsModal";
 import { getSeasons } from "@/services/season.service";
 import {
@@ -247,17 +248,20 @@ export default function AdminTeamsPage() {
                   </Text>
                 </div>
 
-                <Tag
-                  color={
-                    team.status === "approved"
-                      ? "green"
-                      : team.status === "rejected"
-                        ? "red"
-                        : "orange"
-                  }
-                >
-                  {team.status.toUpperCase()}
-                </Tag>
+                <Space wrap>
+                  <Tag
+                    color={
+                      team.status === "approved"
+                        ? "green"
+                        : team.status === "rejected"
+                          ? "red"
+                          : "orange"
+                    }
+                  >
+                    {team.status.toUpperCase()}
+                  </Tag>
+                  <TeamPaymentStatusTag status={team.paymentStatus} showLabel />
+                </Space>
               </div>
 
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -329,6 +333,13 @@ export default function AdminTeamsPage() {
           team={selectedTeam}
           seasonId={seasonId}
           onClose={() => setSelectedTeam(null)}
+          onPaymentReviewed={(paymentStatus) => {
+            setTeams((current) =>
+              current.map((team) =>
+                team._id === selectedTeam._id ? { ...team, paymentStatus } : team,
+              ),
+            );
+          }}
         />
       )}
       <Modal
