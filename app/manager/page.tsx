@@ -123,6 +123,7 @@ export default function ManagerPage() {
             </Link>
           </div>
         </Card>
+        <div className="my-2"></div>
 
         <Card className="mt-4" title="My teams">
           {loading ? (

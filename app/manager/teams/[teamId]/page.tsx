@@ -284,11 +284,13 @@ export default function TeamDetailsPage() {
                 </p>
               )}
             </Card>
+            <div className="mt-2"></div>
             <TeamPaymentPanel
               seasonId={seasonId}
               teamId={team._id}
               teamStatus={team.status}
             />
+            <div className="mt-2"></div>
             <Card title="Division rules" className="mb-4">
               <div className="flex flex-wrap gap-2">
                 {division?.minAge != null ||
@@ -329,6 +331,7 @@ export default function TeamDetailsPage() {
                 <p className="mt-3">{division.description}</p>
               )}
             </Card>
+            <div className="my-2"></div>
 
             <Card
               title={`Players (${players.length}${
@@ -349,18 +352,20 @@ export default function TeamDetailsPage() {
             >
               {division?.minPlayers != null &&
                 players.length < division.minPlayers && (
-                  <Alert
-                    className="mb-4"
-                    type="info"
-                    showIcon
-                    title={`Add ${
-                      division.minPlayers - players.length
-                    } more player${
-                      division.minPlayers - players.length === 1
-                        ? ""
-                        : "s"
-                    } to reach the minimum roster size.`}
-                  />
+                  <div className="mb-3">
+                    <Alert
+                      className="mb-4"
+                      type="info"
+                      showIcon
+                      title={`Add ${
+                        division.minPlayers - players.length
+                      } more player${
+                        division.minPlayers - players.length === 1
+                          ? ""
+                          : "s"
+                      } to reach the minimum roster size.`}
+                    />
+                  </div>
                 )}
 
               {players.length === 0 ? (
