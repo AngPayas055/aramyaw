@@ -203,6 +203,7 @@ export interface PlayerStatusInput {
   playingStatus: PlayingStatus;
   statusReason?: string;
   suspensionUntil?: string;
+  birthDate?: string;
 }
 
 function playerPath(seasonId: string, teamId: string) {

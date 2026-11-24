@@ -40,19 +40,24 @@ export default function PlayerStatusEditor({
   const [status, setStatus] = useState<PlayingStatus>("allowed");
   const [reason, setReason] = useState("");
   const [until, setUntil] = useState("");
+  const [birthDate, setBirthDate] = useState("");
 
   function openEditor() {
     setVerification(player.verificationStatus ?? "unverified");
     setStatus(player.playingStatus ?? "allowed");
     setReason(player.statusReason ?? "");
     setUntil(player.suspensionUntil ?? "");
+    setBirthDate(player.birthDate);
     setError("");
     setOpen(true);
   }
 
   async function saveStatus() {
     if (saving) return;
-
+    if (!birthDate) {
+      setError("Enter a birth date.");
+      return;
+    }
     if (status !== "allowed" && !reason.trim()) {
       setError("Please provide a reason for the restriction.");
       return;
@@ -77,10 +82,9 @@ export default function PlayerStatusEditor({
         {
           verificationStatus: verification,
           playingStatus: status,
-          statusReason:
-            status === "allowed" ? undefined : reason.trim(),
-          suspensionUntil:
-            status === "suspended" && until ? until : undefined,
+          statusReason: status === "allowed" ? undefined : reason.trim(),
+          suspensionUntil: status === "suspended" && until ? until : undefined,
+          birthDate: birthDate === player.birthDate ? undefined : birthDate,
         },
       );
 
@@ -100,13 +104,13 @@ export default function PlayerStatusEditor({
   return (
     <>
       <Button size="small" onClick={openEditor}>
-        Update status
+        Edit player
       </Button>
 
       <Modal
         title={`${player.firstName} ${player.lastName}`}
         open={open}
-        okText="Save status"
+        okText="Save changes"
         confirmLoading={saving}
         cancelButtonProps={{ disabled: saving }}
         closable={!saving}
@@ -129,6 +133,24 @@ export default function PlayerStatusEditor({
         <div className="flex flex-col gap-4">
           <div>
             <label
+              htmlFor={`birth-date-${player._id}`}
+              className="mb-2 block font-medium"
+            >
+              Birth date
+            </label>
+
+            <Input
+              id={`birth-date-${player._id}`}
+              type="date"
+              max={new Date().toISOString().slice(0, 10)}
+              value={birthDate}
+              onChange={(event) => setBirthDate(event.target.value)}
+              disabled={saving}
+              className="w-full"
+            />
+          </div>
+          <div>
+            <label
               htmlFor={`verification-${player._id}`}
               className="mb-2 block font-medium"
             >
@@ -147,7 +169,6 @@ export default function PlayerStatusEditor({
               ]}
             />
           </div>
-
           <div>
             <label
               htmlFor={`playing-${player._id}`}
