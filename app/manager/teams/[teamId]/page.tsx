@@ -483,6 +483,7 @@ export default function TeamDetailsPage() {
                   <Input
                     type="date"
                     max={new Date().toISOString().slice(0, 10)}
+                    disabled={editing?.verificationStatus === "verified"}
                   />
                 </Form.Item>
 
