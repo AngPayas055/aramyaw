@@ -479,6 +479,11 @@ export default function TeamDetailsPage() {
                       message: "Enter a birth date.",
                     },
                   ]}
+                  extra={
+                    editing?.verificationStatus === "verified"
+                      ? "Player is verified. Only admins can change the birth date."
+                      : undefined
+                  }
                 >
                   <Input
                     type="date"
