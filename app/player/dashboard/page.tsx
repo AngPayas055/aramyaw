@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "antd";
 import FindTeamPanel from "./FindTeamPanel";
 import PlayerProfileForm from "./PlayerProfileForm";
+import PlayerTeamsPanel from "./PlayerTeamsPanel";
 
 function subscribe(onChange: () => void) {
   window.addEventListener("storage", onChange);
@@ -66,7 +67,7 @@ export default function PlayerDashboardPage() {
         <Button onClick={handleSignOut}>Sign out</Button>
       </div>
       <PlayerProfileForm key={`profile-${token}`} token={token} />
-      <FindTeamPanel key={`find-team-${token}`} token={token} />
+      <PlayerTeamsPanel key={`player-teams-${token}`} token={token} />
     </main>
   );
 }
