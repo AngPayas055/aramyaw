@@ -19,6 +19,7 @@ export interface Division {
   tournamentFormat: TournamentFormat;
   playoffTeams?: number | null;
   registrationEnabled: boolean;
+  playerRegistrationFeeCentavos?: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -33,6 +34,7 @@ export interface CreateDivisionPayload {
   minPlayers?: number;
   maxPlayers?: number;
   registrationFeeCentavos?: number;
+  playerRegistrationFeeCentavos?: number | null;
   tournamentFormat?: TournamentFormat;
   playoffTeams?: number | null;
   registrationEnabled?: boolean;

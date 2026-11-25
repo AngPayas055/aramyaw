@@ -56,7 +56,7 @@ interface DivisionFormValues {
   maxTeams: number;
   minPlayers: number;
   maxPlayers: number;
-  registrationFeePesos: number;
+  playerRegistrationFeePesos?: number | null;
   tournamentFormat: TournamentFormat;
   playoffTeams?: number | null;
   registrationEnabled: boolean;
@@ -165,7 +165,10 @@ export default function SeasonDivisionsPage() {
       maxTeams: division.maxTeams,
       minPlayers: division.minPlayers,
       maxPlayers: division.maxPlayers,
-      registrationFeePesos: division.registrationFeeCentavos / 100,
+      playerRegistrationFeePesos:
+        division.playerRegistrationFeeCentavos == null
+          ? null
+          : division.playerRegistrationFeeCentavos / 100,
       tournamentFormat: division.tournamentFormat,
       playoffTeams: division.playoffTeams,
       registrationEnabled: division.registrationEnabled,
@@ -188,9 +191,12 @@ export default function SeasonDivisionsPage() {
         maxTeams: values.maxTeams,
         minPlayers: values.minPlayers,
         maxPlayers: values.maxPlayers,
-        registrationFeeCentavos: Math.round(
-          values.registrationFeePesos * 100,
-        ),
+        playerRegistrationFeeCentavos:
+          values.playerRegistrationFeePesos == null
+            ? editingDivision
+              ? null
+              : undefined
+            : Math.round(values.playerRegistrationFeePesos * 100),
         tournamentFormat: values.tournamentFormat,
         playoffTeams:
           values.tournamentFormat === "round_robin_playoffs"
@@ -385,13 +391,15 @@ export default function SeasonDivisionsPage() {
                 `${division.minPlayers}–${division.maxPlayers}`,
             },
             {
-              title: "Fee",
-              dataIndex: "registrationFeeCentavos",
-              render: (value: number) =>
-                new Intl.NumberFormat("en-PH", {
-                  style: "currency",
-                  currency: "PHP",
-                }).format(value / 100),
+              title: "Fee per player",
+              dataIndex: "playerRegistrationFeeCentavos",
+              render: (value?: number | null) =>
+                value == null
+                  ? "Not set"
+                  : new Intl.NumberFormat("en-PH", {
+                      style: "currency",
+                      currency: "PHP",
+                    }).format(value / 100),
             },
             {
               title: "Format",
@@ -566,19 +574,11 @@ export default function SeasonDivisionsPage() {
             </Form.Item>
 
             <Form.Item
-              name="registrationFeePesos"
-              label="Registration Fee (₱)"
-              rules={[
-                { required: true, message: "Enter a fee, or 0." },
-                { type: "number", min: 0 },
-              ]}
+              name="playerRegistrationFeePesos"
+              label="Registration fee per player (₱)"
+              rules={[{ type: "number", min: 0 }]}
             >
-              <InputNumber
-                min={0}
-                precision={2}
-                step={100}
-                className="w-full!"
-              />
+              <InputNumber min={0} precision={2} className="w-full!" />
             </Form.Item>
 
             <Form.Item
