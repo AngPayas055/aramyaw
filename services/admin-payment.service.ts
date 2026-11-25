@@ -43,3 +43,56 @@ export async function getAdminPayments(
   }
   return response.json();
 }
+
+export type PendingPlayerPayment = {
+  _id: string;
+  player: { firstName: string; lastName: string } | null;
+  team: { name: string } | null;
+  season: { name: string } | null;
+  division: { name: string } | null;
+  method: "gcash" | "maya";
+  referenceNumber: string;
+  expectedAmountCentavos: number;
+  paidAt: string;
+};
+
+export async function getPendingPlayerPayments(
+  token: string,
+  signal?: AbortSignal,
+): Promise<{ payments: PendingPlayerPayment[] }> {
+  const response = await fetch(apiUrl("/api/admin/player-payments"), {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+    signal,
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null);
+    throw new Error(data?.message || "Could not load player payments.");
+  }
+
+  return response.json();
+}
+
+export async function reviewPlayerPayment(
+  token: string,
+  paymentId: string,
+  review: { status: "paid" } | { status: "rejected"; rejectionReason: string },
+): Promise<void> {
+  const response = await fetch(
+    apiUrl(`/api/admin/player-payments/${encodeURIComponent(paymentId)}/review`),
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(review),
+    },
+  );
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null);
+    throw new Error(data?.message || "Could not review the payment.");
+  }
+}

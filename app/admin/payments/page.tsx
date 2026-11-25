@@ -6,6 +6,7 @@ import TeamPaymentPanel from "@/app/components/TeamPaymentPanel";
 import { getSeasons } from "@/services/season.service";
 import { getAdminPayments, PAYMENTS_CHANGED, type AdminPayment, type AdminPaymentsResult } from "@/services/admin-payment.service";
 import type { PaymentStatus } from "@/services/payment.service";
+import PlayerPaymentsPanel from "./PlayerPaymentsPanel";
 
 const labels = { pending: "For verification", paid: "Paid", rejected: "Rejected" };
 const colors = { pending: "orange", paid: "green", rejected: "red" };
@@ -44,6 +45,8 @@ export default function AdminPaymentsPage() {
   return (
     <main className="mx-auto w-full max-w-7xl p-6">
       <Typography.Title level={2}>Payments</Typography.Title>
+      <Typography.Title level={2}>Payments</Typography.Title>
+      <PlayerPaymentsPanel />
       <Typography.Paragraph type="secondary">
         Review registration payments across teams. Dates are shown in Philippine time.
       </Typography.Paragraph>
