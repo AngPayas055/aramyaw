@@ -1,0 +1,105 @@
+"use client";
+
+import { useEffect, useState, type FormEvent } from "react";
+import { Alert, Button, Card, Input } from "antd";
+
+import {
+  requestPlayerProfile,
+  type PlayerProfile,
+} from "@/services/player-profile.service";
+
+export default function PlayerProfileForm({ token }: { token: string }) {
+  const [profile, setProfile] = useState<PlayerProfile | null>(null);
+  const [birthDate, setBirthDate] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    requestPlayerProfile(token, { signal: controller.signal })
+      .then((profile) => {
+        setProfile(profile);
+        setBirthDate(profile.birthDate ?? "");
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) {
+          setError("Could not load your profile. Refresh the page to try again.");
+        }
+      });
+
+    return () => controller.abort();
+  }, [token]);
+
+  async function saveBirthDate(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSaving(true);
+    setSaved(false);
+    setError("");
+
+    try {
+      const updatedProfile = await requestPlayerProfile(token, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ birthDate }),
+      });
+
+      setProfile(updatedProfile);
+      setBirthDate(updatedProfile.birthDate ?? "");
+      setSaved(true);
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Could not save your birthdate.",
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Card title="Player profile" className="mt-6 max-w-md">
+      {error && <Alert type="error" title={error} showIcon />}
+      {!profile && !error && <p role="status">Loading your profile…</p>}
+
+      {profile && (
+        <form onSubmit={saveBirthDate} className="flex flex-col gap-4">
+          <p className="font-medium">
+            {profile.firstName} {profile.lastName}
+          </p>
+
+          <div>
+            <label htmlFor="player-birthdate" className="mb-1 block">
+              Birthdate
+            </label>
+            <Input
+              id="player-birthdate"
+              type="date"
+              value={birthDate}
+              min="0001-01-01"
+              required
+              disabled={saving}
+              onChange={(event) => {
+                setBirthDate(event.target.value);
+                setSaved(false);
+                setError("");
+              }}
+            />
+          </div>
+
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={saving}
+            disabled={!birthDate || birthDate === profile.birthDate}
+            className="self-start"
+          >
+            Save birthdate
+          </Button>
+
+          {saved && <Alert type="success" title="Birthdate saved." showIcon />}
+        </form>
+      )}
+    </Card>
+  );
+}

@@ -4,6 +4,8 @@ import { useEffect, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "antd";
 
+import PlayerProfileForm from "./PlayerProfileForm";
+
 function subscribe(onChange: () => void) {
   window.addEventListener("storage", onChange);
   window.addEventListener("auth-change", onChange);
@@ -14,8 +16,12 @@ function subscribe(onChange: () => void) {
   };
 }
 
+function getToken() {
+  return localStorage.getItem("token");
+}
+
 function getAccess() {
-  const token = localStorage.getItem("token");
+  const token = getToken();
   const storedUser = localStorage.getItem("user");
 
   if (!token || !storedUser) return "guest";
@@ -36,6 +42,7 @@ function getAccess() {
 export default function PlayerDashboardPage() {
   const router = useRouter();
   const access = useSyncExternalStore(subscribe, getAccess, () => null);
+  const token = useSyncExternalStore(subscribe, getToken, () => null);
 
   useEffect(() => {
     if (access === "guest") router.replace("/signin");
@@ -50,7 +57,7 @@ export default function PlayerDashboardPage() {
     router.replace("/signin");
   }
 
-  if (access !== "player") return null;
+  if (access !== "player" || !token) return null;
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
@@ -58,6 +65,8 @@ export default function PlayerDashboardPage() {
         <h1 className="text-2xl font-semibold">Player dashboard</h1>
         <Button onClick={handleSignOut}>Sign out</Button>
       </div>
+
+      <PlayerProfileForm key={token} token={token} />
     </main>
   );
 }
