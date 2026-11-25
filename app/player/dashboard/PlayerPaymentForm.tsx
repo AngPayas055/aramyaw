@@ -9,6 +9,7 @@ import { apiUrl } from "@/services/api";
 type Payment = {
   status: "pending" | "paid" | "rejected";
   expectedAmountCentavos: number;
+  rejectionReason?: string;
 };
 
 type PaymentValues = {
@@ -136,6 +137,7 @@ export default function PlayerPaymentForm({
           className="mb-3"
           type="warning"
           title="Your previous payment was rejected. You can submit again."
+          description={payment.rejectionReason || undefined}
           showIcon
         />
       )}

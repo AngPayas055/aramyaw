@@ -191,6 +191,7 @@ export interface Player {
   verifiedAt?: string;
   statusUpdatedBy?: string;
   statusUpdatedAt?: string;
+  registrationPaymentStatus?: "unpaid" | "pending" | "paid" | "rejected" | null;
 }
 
 export type PlayerInput = Pick<
