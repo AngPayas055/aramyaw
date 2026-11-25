@@ -45,6 +45,7 @@ export default function SignUpPage() {
         email: values.email.trim().toLowerCase(),
         contactNumber: values.contactNumber.trim(),
         password: values.password,
+        role: values.role,
       });
 
       messageApi.success(
