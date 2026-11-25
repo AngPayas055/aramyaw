@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Alert, Card, Spin } from "antd";
-
+import PlayerPaymentForm from "./PlayerPaymentForm";
 import { apiUrl } from "@/services/api";
 import FindTeamPanel from "./FindTeamPanel";
 
@@ -93,6 +93,11 @@ export default function PlayerTeamsPanel({ token }: { token: string }) {
                     currency: "PHP",
                   }).format(team.division.playerRegistrationFeeCentavos / 100)}
             </p>
+            <PlayerPaymentForm
+              teamId={team._id}
+              token={token}
+              feeCentavos={team.division?.playerRegistrationFeeCentavos}
+            />
             <p className="mt-3 text-sm">
               <span className="font-medium">Manager:</span>{" "}
               {team.manager
