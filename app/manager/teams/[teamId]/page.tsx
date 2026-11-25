@@ -33,6 +33,13 @@ import PlayerStatusBadges from "@/app/components/PlayerStatusBadges";
 
 const { Title, Text } = Typography;
 
+const registrationPaymentTags = {
+  unpaid: { color: "default", label: "Unpaid" },
+  pending: { color: "orange", label: "Pending review" },
+  paid: { color: "green", label: "Paid" },
+  rejected: { color: "red", label: "Rejected" },
+};
+
 function idOf(value: Team["season"] | Team["division"]) {
   return typeof value === "string" ? value : value._id;
 }
@@ -402,6 +409,19 @@ export default function TeamDetailsPage() {
                             player={player}
                             teamApproved={team.status === "approved"}
                           />
+
+                          <div className="mt-1">
+                            <Text type="secondary">Registration fee: </Text>
+                            {player.registrationPaymentStatus ? (
+                              <Tag
+                                color={registrationPaymentTags[player.registrationPaymentStatus].color}
+                              >
+                                {registrationPaymentTags[player.registrationPaymentStatus].label}
+                              </Tag>
+                            ) : (
+                              <span>—</span>
+                            )}
+                          </div>
                         </div>
                       </div>
 
