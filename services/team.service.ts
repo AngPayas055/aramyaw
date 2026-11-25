@@ -214,7 +214,7 @@ async function playerRequest<T>(
   path: string,
   token: string,
   method = "GET",
-  body?: PlayerInput | PlayerStatusInput,
+  body?: PlayerInput | PlayerStatusInput | { status: JoinRequestDecision },
 ): Promise<T> {
   const response = await fetch(apiUrl(path), {
     method,
@@ -310,5 +310,42 @@ export function getAdminTeamPlayers(
   return playerRequest<{ players: Player[] }>(
     `/api/seasons/${encodeURIComponent(seasonId)}/teams/${encodeURIComponent(teamId)}/roster`,
     token,
+  );
+}
+
+export type JoinRequestDecision = "approved" | "declined";
+
+export type PendingJoinRequest = {
+  _id: string;
+  player: { firstName: string; lastName: string } | null;
+};
+
+function joinRequestsPath(seasonId: string, teamId: string) {
+  return `/api/seasons/${encodeURIComponent(seasonId)}/teams/${encodeURIComponent(teamId)}/join-requests`;
+}
+
+export function getPendingJoinRequests(
+  seasonId: string,
+  teamId: string,
+  token: string,
+) {
+  return playerRequest<{ joinRequests: PendingJoinRequest[] }>(
+    joinRequestsPath(seasonId, teamId),
+    token,
+  );
+}
+
+export function reviewJoinRequest(
+  seasonId: string,
+  teamId: string,
+  requestId: string,
+  token: string,
+  status: JoinRequestDecision,
+) {
+  return playerRequest<unknown>(
+    `${joinRequestsPath(seasonId, teamId)}/${encodeURIComponent(requestId)}`,
+    token,
+    "PATCH",
+    { status },
   );
 }

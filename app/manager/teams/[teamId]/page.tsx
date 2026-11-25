@@ -17,7 +17,7 @@ import {
   Tag,
   Typography,
 } from "antd";
-
+import JoinRequestsPanel from "./JoinRequestsPanel";
 import { getSeasons } from "@/services/season.service";
 import {
   addPlayer,
@@ -291,6 +291,15 @@ export default function TeamDetailsPage() {
               teamStatus={team.status}
             />
             <div className="mt-2"></div>
+            <JoinRequestsPanel
+              key={`${seasonId}:${team._id}`}
+              seasonId={seasonId}
+              teamId={team._id}
+              onApproved={async (token) => {
+                const { players } = await getPlayers(seasonId, team._id, token);
+                setPlayers(players);
+              }}
+            />
             <Card title="Division rules" className="mb-4">
               <div className="flex flex-wrap gap-2">
                 {division?.minAge != null ||

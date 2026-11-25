@@ -8,6 +8,21 @@ import {
   type PlayerProfile,
 } from "@/services/player-profile.service";
 
+const manilaDateFormat = new Intl.DateTimeFormat("sv-SE", {
+  timeZone: "Asia/Manila",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+function getAgeToday(birthDate: string): number {
+  const today = manilaDateFormat.format(new Date());
+  const yearDifference = Number(today.slice(0, 4)) - Number(birthDate.slice(0, 4));
+  const birthdayHasPassed = today.slice(5) >= birthDate.slice(5);
+
+  return birthdayHasPassed ? yearDifference : yearDifference - 1;
+}
+
 export default function PlayerProfileForm({ token }: { token: string }) {
   const [profile, setProfile] = useState<PlayerProfile | null>(null);
   const [birthDate, setBirthDate] = useState("");
@@ -61,7 +76,7 @@ export default function PlayerProfileForm({ token }: { token: string }) {
     <Card title="Player profile" className="mt-6 max-w-md">
       {error && <Alert type="error" title={error} showIcon />}
       {!profile && !error && <p role="status">Loading your profile…</p>}
-
+      
       {profile && (
         <form onSubmit={saveBirthDate} className="flex flex-col gap-4">
           <p className="font-medium">
@@ -85,6 +100,11 @@ export default function PlayerProfileForm({ token }: { token: string }) {
                 setError("");
               }}
             />
+            {profile.birthDate && (
+              <p className="mt-1 text-sm">
+                Age today: {getAgeToday(profile.birthDate)}
+              </p>
+            )}
           </div>
 
           <Button
