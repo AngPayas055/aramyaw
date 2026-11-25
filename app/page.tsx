@@ -11,7 +11,7 @@ import JerseySection from "./components/JerseySection";
 import LeaguesSection from "./components/LeaguesSection";
 import ProofStrip from "./components/ProofStrip";
 
-type Destination = "/admin" | "/manager" | "home";
+type Destination = "/admin" | "/manager" | "/player/dashboard" | "home";
 
 function subscribe() {
   return () => {};
@@ -27,6 +27,7 @@ function getSnapshot(): Destination {
     const user = JSON.parse(savedUser) as { role?: string };
     if (user.role === "admin") return "/admin";
     if (user.role === "user") return "/manager";
+    if (user.role === "player") return "/player/dashboard";
   } catch {
   }
 
@@ -46,7 +47,7 @@ export default function Home() {
   );
 
   useEffect(() => {
-    if (destination === "/admin" || destination === "/manager") {
+    if (destination && destination !== "home") {
       router.replace(destination);
     }
   }, [destination, router]);

@@ -1,9 +1,12 @@
+export type RegisterRole = "user" | "player";
+
 export type RegisterPayload = {
   firstName: string;
   lastName: string;
   email: string;
   contactNumber: string;
   password: string;
+  role?: RegisterRole;
 };
 
 export type AuthUser = {

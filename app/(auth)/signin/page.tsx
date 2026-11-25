@@ -51,11 +51,13 @@ export default function SignInPage() {
       messageApi.success(
         data.message || "Signed in successfully.",
       );
-      router.replace(
-        data.user.role === "admin"
-          ? "/admin"
-          : getAuthRedirect(window.location.search),
-      );
+      if (data.user.role === "admin") {
+        router.replace("/admin");
+      } else if (data.user.role === "player") {
+        router.replace("/player/dashboard");
+      } else {
+        router.replace(getAuthRedirect(window.location.search));
+      }
     } catch (error) {
       messageApi.error(
         error instanceof Error

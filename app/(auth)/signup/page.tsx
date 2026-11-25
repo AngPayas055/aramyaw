@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-
-import { Button, Checkbox, Form, Input, message } from "antd";
+import { Button, Checkbox, Form, Input, Select, message } from "antd";
+import type { RegisterRole } from "@/types/auth";
 import {
   LockOutlined,
   MailOutlined,
@@ -26,6 +26,7 @@ type SignUpValues = {
   password: string;
   confirmPassword: string;
   acceptTerms: boolean;
+  role: RegisterRole;
 };
 
 export default function SignUpPage() {
@@ -81,7 +82,20 @@ export default function SignUpPage() {
           requiredMark={false}
           onFinish={handleSubmit}
           disabled={loading}
+          initialValues={{ role: "user" }}
         >
+          <Form.Item
+            label="Account type"
+            name="role"
+            rules={[{ required: true, message: "Please select an account type." }]}
+          >
+            <Select
+              options={[
+                { value: "user", label: "Manager / Coach" },
+                { value: "player", label: "Player" },
+              ]}
+            />
+          </Form.Item>
           <Form.Item
             label="First name"
             name="firstName"

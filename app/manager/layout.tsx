@@ -4,7 +4,7 @@ import { useEffect, useSyncExternalStore, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { Spin } from "antd";
 
-type Access = "loading" | "guest" | "manager" | "admin";
+type Access = "loading" | "guest" | "manager" | "admin" | "player";
 
 function getSnapshot(): Access {
   const token = localStorage.getItem("token");
@@ -12,7 +12,10 @@ function getSnapshot(): Access {
   if (!token || !storedUser) return "guest";
 
   try {
-    return JSON.parse(storedUser)?.role === "admin" ? "admin" : "manager";
+    const role = JSON.parse(storedUser)?.role;
+    if (role === "admin") return "admin";
+    if (role === "player") return "player";
+    return "manager";
   } catch {
     return "guest";
   }
@@ -34,6 +37,7 @@ export default function ManagerLayout({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (access === "guest") router.replace("/signin");
     if (access === "admin") router.replace("/admin");
+    if (access === "player") router.replace("/player/dashboard");
   }, [access, router]);
 
   if (access !== "manager") {
