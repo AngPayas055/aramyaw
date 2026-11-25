@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createTeam } from "@/services/team.service";
-import { Alert } from "antd";
+import { Alert, ConfigProvider, theme } from "antd";
 import {
   ArrowLeftOutlined,
   CalendarOutlined,
@@ -72,6 +72,14 @@ function getServerUser() {
 }
 
 export default function JoinLeaguePage() {
+  return (
+    <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
+      <JoinLeagueContent />
+    </ConfigProvider>
+  );
+}
+
+function JoinLeagueContent() {
   const router = useRouter();
   const [form] = Form.useForm<TeamRegistrationValues>();
   const [season, setSeason] = useState<Season | null>(null);

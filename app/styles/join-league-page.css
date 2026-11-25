@@ -51,7 +51,7 @@
   font-weight: 400;
 }
 
-.join-league-header p {
+.join-league-header > div > .ant-typography {
   max-width: 620px;
   margin: 0;
   color: rgba(255, 255, 255, 0.64);
@@ -117,7 +117,7 @@
   color: #ffffff !important;
 }
 
-.join-season-details p {
+.join-season-details > div.ant-typography {
   margin: 0;
   color: rgba(255, 255, 255, 0.6);
 }

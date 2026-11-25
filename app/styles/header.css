@@ -194,14 +194,3 @@ nav a:hover {
     font-size: 13px;
   }
 }
-
-@media (max-width: 380px) {
-  .signin-link span {
-    display: none;
-  }
-
-  .signin-link {
-    width: 40px;
-    padding: 0;
-  }
-}
