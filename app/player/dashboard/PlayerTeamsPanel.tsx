@@ -11,7 +11,10 @@ type PlayerTeam = {
   name: string;
   barangay: string;
   season: { name: string } | null;
-  division: { name: string } | null;
+  division: {
+    name: string;
+    playerRegistrationFeeCentavos?: number | null;
+  } | null;
   manager: { firstName: string; lastName: string } | null;
   players: {
     _id: string;
@@ -80,6 +83,15 @@ export default function PlayerTeamsPanel({ token }: { token: string }) {
               {[team.season?.name, team.division?.name, team.barangay]
                 .filter(Boolean)
                 .join(" · ")}
+            </p>
+            <p className="mt-2 text-sm">
+              <span className="font-medium">Registration fee:</span>{" "}
+              {team.division?.playerRegistrationFeeCentavos == null
+                ? "Not set yet"
+                : new Intl.NumberFormat("en-PH", {
+                    style: "currency",
+                    currency: "PHP",
+                  }).format(team.division.playerRegistrationFeeCentavos / 100)}
             </p>
             <p className="mt-3 text-sm">
               <span className="font-medium">Manager:</span>{" "}
