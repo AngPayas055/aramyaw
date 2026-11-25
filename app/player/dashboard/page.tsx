@@ -3,7 +3,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "antd";
-
+import FindTeamPanel from "./FindTeamPanel";
 import PlayerProfileForm from "./PlayerProfileForm";
 
 function subscribe(onChange: () => void) {
@@ -65,8 +65,8 @@ export default function PlayerDashboardPage() {
         <h1 className="text-2xl font-semibold">Player dashboard</h1>
         <Button onClick={handleSignOut}>Sign out</Button>
       </div>
-
-      <PlayerProfileForm key={token} token={token} />
+      <PlayerProfileForm key={`profile-${token}`} token={token} />
+      <FindTeamPanel key={`find-team-${token}`} token={token} />
     </main>
   );
 }

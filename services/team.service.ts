@@ -349,3 +349,29 @@ export function reviewJoinRequest(
     { status },
   );
 }
+
+export type JoinableTeam = {
+  _id: string;
+  name: string;
+  barangay: string;
+  division: { _id: string; name: string } | null;
+};
+
+export function getJoinableTeams(seasonId: string, token: string) {
+  return playerRequest<{ teams: JoinableTeam[] }>(
+    `/api/seasons/${encodeURIComponent(seasonId)}/teams/joinable`,
+    token,
+  );
+}
+
+export function sendTeamJoinRequest(
+  seasonId: string,
+  teamId: string,
+  token: string,
+) {
+  return playerRequest<unknown>(
+    joinRequestsPath(seasonId, teamId),
+    token,
+    "POST",
+  );
+}
