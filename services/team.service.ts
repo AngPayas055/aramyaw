@@ -204,6 +204,8 @@ export interface PlayerStatusInput {
   playingStatus: PlayingStatus;
   statusReason?: string;
   suspensionUntil?: string;
+  firstName?: string;
+  lastName?: string;
   birthDate?: string;
 }
 

@@ -40,6 +40,8 @@ export default function PlayerStatusEditor({
   const [status, setStatus] = useState<PlayingStatus>("allowed");
   const [reason, setReason] = useState("");
   const [until, setUntil] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [birthDate, setBirthDate] = useState("");
 
   function openEditor() {
@@ -48,6 +50,8 @@ export default function PlayerStatusEditor({
     setReason(player.statusReason ?? "");
     setUntil(player.suspensionUntil ?? "");
     setBirthDate(player.birthDate);
+    setFirstName(player.firstName);
+    setLastName(player.lastName);
     setError("");
     setOpen(true);
   }
@@ -84,6 +88,8 @@ export default function PlayerStatusEditor({
           playingStatus: status,
           statusReason: status === "allowed" ? undefined : reason.trim(),
           suspensionUntil: status === "suspended" && until ? until : undefined,
+          firstName: firstName.trim() === player.firstName ? undefined : firstName.trim(),
+          lastName: lastName.trim() === player.lastName ? undefined : lastName.trim(),
           birthDate: birthDate === player.birthDate ? undefined : birthDate,
         },
       );
@@ -132,6 +138,25 @@ export default function PlayerStatusEditor({
 
         <div className="flex flex-col gap-4">
           <div>
+            <label>
+              First name
+              <Input
+                value={firstName}
+                maxLength={80}
+                disabled={saving}
+                onChange={(event) => setFirstName(event.target.value)}
+              />
+            </label>
+
+            <label>
+              Last name
+              <Input
+                value={lastName}
+                maxLength={80}
+                disabled={saving}
+                onChange={(event) => setLastName(event.target.value)}
+              />
+            </label>
             <label
               htmlFor={`birth-date-${player._id}`}
               className="mb-2 block font-medium"

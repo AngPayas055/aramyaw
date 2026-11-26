@@ -208,6 +208,8 @@ export default function TeamDetailsPage() {
     }
   }
 
+  const identityLocked = editing?.verificationStatus === "verified";
+
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-8">
       <div className="mx-auto max-w-4xl">
@@ -459,7 +461,7 @@ export default function TeamDetailsPage() {
                   name="firstName"
                   rules={[{ required: true, whitespace: true }]}
                 >
-                  <Input maxLength={80} />
+                  <Input maxLength={80} disabled={identityLocked}/>
                 </Form.Item>
 
                 <Form.Item
@@ -467,7 +469,7 @@ export default function TeamDetailsPage() {
                   name="lastName"
                   rules={[{ required: true, whitespace: true }]}
                 >
-                  <Input maxLength={80} />
+                  <Input maxLength={80} disabled={identityLocked}/>
                 </Form.Item>
 
                 <Form.Item
@@ -479,16 +481,11 @@ export default function TeamDetailsPage() {
                       message: "Enter a birth date.",
                     },
                   ]}
-                  extra={
-                    editing?.verificationStatus === "verified"
-                      ? "Player is verified. Only admins can change the birth date."
-                      : undefined
-                  }
                 >
                   <Input
                     type="date"
                     max={new Date().toISOString().slice(0, 10)}
-                    disabled={editing?.verificationStatus === "verified"}
+                    disabled={identityLocked}
                   />
                 </Form.Item>
 

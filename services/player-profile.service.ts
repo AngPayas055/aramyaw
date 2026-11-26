@@ -4,6 +4,7 @@ export type PlayerProfile = {
   firstName: string;
   lastName: string;
   birthDate: string | null;
+  identityLocked: boolean;
 };
 
 export async function requestPlayerProfile(
@@ -19,7 +20,7 @@ export async function requestPlayerProfile(
     cache: "no-store",
   });
 
-  if (response.status === 401 || response.status === 403) {
+  if (response.status === 401) {
     throw new Error("Sign in with your player account to use your profile.");
   }
 

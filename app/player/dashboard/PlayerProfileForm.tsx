@@ -49,6 +49,7 @@ export default function PlayerProfileForm({ token }: { token: string }) {
 
   async function saveBirthDate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!profile || profile.identityLocked) return;
     setSaving(true);
     setSaved(false);
     setError("");
@@ -85,7 +86,13 @@ export default function PlayerProfileForm({ token }: { token: string }) {
           <p className="font-medium">
             {profile.firstName} {profile.lastName}
           </p>
-
+          {profile.identityLocked && (
+            <Alert
+              type="info"
+              showIcon
+              title="This player is verified. Only admins can edit the first name, last name, and birthdate."
+            />
+          )}
           <div>
             <label htmlFor="player-birthdate" className="mb-1 block">
               Birthdate
@@ -96,7 +103,7 @@ export default function PlayerProfileForm({ token }: { token: string }) {
               value={birthDate}
               min="0001-01-01"
               required
-              disabled={saving}
+              disabled={saving || profile.identityLocked}
               onChange={(event) => {
                 setBirthDate(event.target.value);
                 setSaved(false);
@@ -114,7 +121,7 @@ export default function PlayerProfileForm({ token }: { token: string }) {
             type="primary"
             htmlType="submit"
             loading={saving}
-            disabled={!birthDate || birthDate === profile.birthDate}
+            disabled={profile.identityLocked || !birthDate || birthDate === profile.birthDate}
             className="self-start"
           >
             Save birthdate
