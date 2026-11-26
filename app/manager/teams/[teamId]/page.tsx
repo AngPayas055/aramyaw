@@ -20,7 +20,6 @@ import {
 import JoinRequestsPanel from "./JoinRequestsPanel";
 import { getSeasons } from "@/services/season.service";
 import {
-  addPlayer,
   editPlayer,
   getMyTeams,
   getPlayers,
@@ -131,31 +130,22 @@ export default function TeamDetailsPage() {
   const seasonId = team ? idOf(team.season) : "";
   const maxPlayers = division?.maxPlayers;
 
-  function openPlayerForm(player: Player | null) {
+  function openPlayerForm(player: Player) {
     setEditing(player);
     setError("");
 
-    form.setFieldsValue(
-      player
-        ? {
-            firstName: player.firstName,
-            lastName: player.lastName,
-            birthDate: player.birthDate,
-            jerseyNumber: player.jerseyNumber,
-          }
-        : {
-            firstName: "",
-            lastName: "",
-            birthDate: "",
-            jerseyNumber: undefined,
-          },
-    );
+    form.setFieldsValue({
+      firstName: player.firstName,
+      lastName: player.lastName,
+      birthDate: player.birthDate,
+      jerseyNumber: player.jerseyNumber,
+    });
 
     setModalOpen(true);
   }
 
   async function savePlayer(values: PlayerInput) {
-    if (!team) return;
+    if (!team || !editing) return;
 
     const token = localStorage.getItem("token");
 
@@ -168,26 +158,19 @@ export default function TeamDetailsPage() {
     setError("");
 
     try {
-      const result = editing
-        ? await editPlayer(
-            seasonId,
-            teamId,
-            editing._id,
-            token,
-            values,
-          )
-        : await addPlayer(seasonId, teamId, token, values);
-
-      setPlayers((current) =>
-        editing
-          ? current.map((player) =>
-              player._id === editing._id ? result.player : player,
-            )
-          : [...current, result.player],
+      const { player: updatedPlayer } = await editPlayer(
+        seasonId,
+        teamId,
+        editing._id,
+        token,
+        values,
       );
 
-      setModalOpen(false);
-      form.resetFields();
+      setPlayers((current) =>
+        current.map((player) =>
+          player._id === updatedPlayer._id ? updatedPlayer : player,
+        ),
+      );
     } catch (cause) {
       setError(
         cause instanceof Error
@@ -353,18 +336,6 @@ export default function TeamDetailsPage() {
               title={`Players (${players.length}${
                 maxPlayers ? `/${maxPlayers}` : ""
               })`}
-              extra={
-                <Button
-                  type="primary"
-                  disabled={
-                    maxPlayers != null &&
-                    players.length >= maxPlayers
-                  }
-                  onClick={() => openPlayerForm(null)}
-                >
-                  Add player
-                </Button>
-              }
             >
               {division?.minPlayers != null &&
                 players.length < division.minPlayers && (
@@ -385,7 +356,7 @@ export default function TeamDetailsPage() {
                 )}
 
               {players.length === 0 ? (
-                <Empty description="No players added yet." />
+                <Empty description="Players appear here after you approve their join requests." />
               ) : (
                 <div className="flex flex-col gap-3">
                   {players.map((player) => (
