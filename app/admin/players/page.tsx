@@ -23,6 +23,7 @@ import {
 import type { Season } from "@/types/season";
 import PlayerStatusBadges from "@/app/components/PlayerStatusBadges";
 import PlayerStatusEditor from "../teams/PlayerStatusEditor";
+import { apiUrl } from "@/services/api";
 
 const { Title, Text } = Typography;
 
@@ -51,6 +52,8 @@ function errorMessage(cause: unknown) {
 }
 
 export default function AdminPlayersPage() {
+  const [total, setTotal] = useState(0);
+  const [divisions, setDivisions] = useState<{ value: string; label: string }[]>([]);
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [seasonId, setSeasonId] = useState<string>();
   const [players, setPlayers] = useState<PlayerRow[]>([]);
@@ -58,7 +61,6 @@ export default function AdminPlayersPage() {
   const [loadingPlayers, setLoadingPlayers] = useState(true);
   const [error, setError] = useState("");
   const [revision, setRevision] = useState(0);
-
   const [search, setSearch] = useState("");
   const [divisionId, setDivisionId] = useState("all");
   const [playingStatus, setPlayingStatus] =
@@ -115,91 +117,49 @@ export default function AdminPlayersPage() {
   useEffect(() => {
     if (!seasonId) return;
 
-    let cancelled = false;
-    const selectedSeasonId = seasonId;
+    const controller = new AbortController();
+    const params = new URLSearchParams({ page: String(page) });
+
+    if (search) params.set("search", search);
+    if (divisionId !== "all") params.set("divisionId", divisionId);
+    if (playingStatus !== "all") params.set("playingStatus", playingStatus);
 
     async function loadPlayers() {
       try {
-        const token = getToken();
-        const result = await getSeasonTeams(
-          selectedSeasonId,
-          token,
+        const response = await fetch(
+          apiUrl(`/api/seasons/${encodeURIComponent(seasonId!)}/players?${params}`),
+          {
+            headers: { Authorization: `Bearer ${getToken()}` },
+            signal: controller.signal,
+            cache: "no-store",
+          },
         );
 
-        if (cancelled) return;
-
-        const rows: PlayerRow[] = [];
-
-        // Fetch a few rosters at a time to avoid overwhelming the API.
-        for (let index = 0; index < result.teams.length; index += 5) {
-          const teams = result.teams.slice(index, index + 5);
-
-          const rosters = await Promise.all(
-            teams.map(async (team) => {
-              const roster = await getAdminTeamPlayers(
-                selectedSeasonId,
-                team._id,
-                token,
-              );
-
-              const division =
-                typeof team.division === "string"
-                  ? {
-                      _id: team.division,
-                      name: team.division,
-                    }
-                  : team.division;
-
-              return roster.players.map(
-                (player): PlayerRow => ({
-                  ...player,
-                  teamId: team._id,
-                  teamName: team.name,
-                  teamStatus: team.status,
-                  divisionId: division._id,
-                  divisionName: division.name,
-                }),
-              );
-            }),
-          );
-
-          if (cancelled) return;
-
-          rows.push(...rosters.flat());
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to load players.");
         }
 
-        setPlayers(rows);
+        if (controller.signal.aborted) return;
+
+        setPlayers(data.players);
+        setDivisions(data.divisions);
+        setTotal(data.total);
         setError("");
       } catch (cause) {
-        if (!cancelled) {
-          setPlayers([]);
-          setError(errorMessage(cause));
-        }
+        if (controller.signal.aborted) return;
+
+        setPlayers([]);
+        setTotal(0);
+        setError(errorMessage(cause));
       } finally {
-        if (!cancelled) {
-          setLoadingPlayers(false);
-        }
+        if (!controller.signal.aborted) setLoadingPlayers(false);
       }
     }
 
     void loadPlayers();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [seasonId, revision]);
-
-  const divisions = Array.from(
-    new Map(
-      players.map((player) => [
-        player.divisionId,
-        {
-          value: player.divisionId,
-          label: player.divisionName,
-        },
-      ]),
-    ).values(),
-  );
+    return () => controller.abort();
+  }, [seasonId, divisionId, playingStatus, search, page, revision]);
 
   const query = search.trim().toLowerCase();
 
@@ -340,13 +300,19 @@ export default function AdminPlayersPage() {
             Search
           </label>
 
-          <Input
+          <Input.Search
             id="players-search"
             allowClear
-            placeholder="Player, team, or jersey"
-            value={search}
-            onChange={(event) => {
-              setSearch(event.target.value);
+            enterButton="Search"
+            maxLength={100}
+            placeholder="Player, team, division, or jersey"
+            disabled={!seasonId}
+            onSearch={(value) => {
+              const nextSearch = value.trim();
+              if (nextSearch === search && page === 1) return;
+
+              setLoadingPlayers(true);
+              setSearch(nextSearch);
               setPage(1);
             }}
           />
@@ -372,8 +338,13 @@ export default function AdminPlayersPage() {
           pagination={{
             current: page,
             pageSize: 10,
+            total,
             showSizeChanger: false,
-            onChange: setPage,
+            onChange: (nextPage) => {
+              if (nextPage === page) return;
+              setLoadingPlayers(true);
+              setPage(nextPage);
+            },
           }}
           locale={{
             emptyText: error
