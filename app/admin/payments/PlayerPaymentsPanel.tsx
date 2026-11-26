@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Alert, Button, Card, Input, Modal, Space, Table } from "antd";
+import { Alert, Button, Card, Input, Modal, Select, Space, Table } from "antd";
 
 import {
   getPendingPlayerPayments,
@@ -33,6 +33,8 @@ export default function PlayerPaymentsPanel() {
   const [reason, setReason] = useState("");
   const [reviewError, setReviewError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [method, setMethod] = useState<"all" | PendingPlayerPayment["method"]>("all");
+  const [revision, setRevision] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -58,7 +60,13 @@ export default function PlayerPaymentsPanel() {
     void loadPayments();
 
     return () => controller.abort();
-  }, []);
+  }, [revision]);
+  
+  function refreshPayments() {
+    setLoadError("");
+    setLoading(true);
+    setRevision((current) => current + 1);
+  }
 
   function openReview(payment: PendingPlayerPayment, status: Selection["status"]) {
     setReason("");
@@ -100,18 +108,55 @@ export default function PlayerPaymentsPanel() {
 
   const rejecting = selection?.status === "rejected";
 
+  const visiblePayments =
+  method === "all"
+    ? payments
+    : payments.filter((payment) => payment.method === method);
+
   return (
-    <Card title="Player payments · Pending review" className="mb-6">
+    <Card title="Player payments" className="mb-6">
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <Select
+          aria-label="Filter player payments by payment method"
+          className="w-full sm:w-52"
+          value={method}
+          onChange={setMethod}
+          options={[
+            { value: "all", label: "All payment methods" },
+            { value: "gcash", label: "GCash" },
+            { value: "maya", label: "Maya" },
+          ]}
+        />
+        <Button
+          loading={loading}
+          disabled={selection !== null}
+          onClick={refreshPayments}
+        >
+          Refresh
+        </Button>
+        {!loading && !loadError && (
+          <span className="text-sm text-gray-600">
+            {visiblePayments.length} pending review
+          </span>
+        )}
+      </div>
+
       {loadError && <Alert type="error" title={loadError} showIcon />}
 
       {!loadError && (
         <Table<PendingPlayerPayment>
+          key={method}
           rowKey="_id"
           dataSource={payments}
           loading={loading}
           scroll={{ x: 850 }}
           pagination={{ pageSize: 10, hideOnSinglePage: true }}
-          locale={{ emptyText: "No pending player payments." }}
+          locale={{
+            emptyText:
+              payments.length === 0
+                ? "No pending player payments."
+                : "No pending player payments for this method.",
+          }}
           columns={[
             {
               title: "Player",

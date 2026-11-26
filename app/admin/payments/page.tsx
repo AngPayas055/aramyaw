@@ -45,7 +45,6 @@ export default function AdminPaymentsPage() {
   return (
     <main className="mx-auto w-full max-w-7xl p-6">
       <Typography.Title level={2}>Payments</Typography.Title>
-      <Typography.Title level={2}>Payments</Typography.Title>
       <PlayerPaymentsPanel />
       <Typography.Paragraph type="secondary">
         Review registration payments across teams. Dates are shown in Philippine time.
