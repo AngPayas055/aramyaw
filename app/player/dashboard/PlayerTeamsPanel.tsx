@@ -74,7 +74,10 @@ export default function PlayerTeamsPanel({ token }: { token: string }) {
   }
 
   return (
-    <Card title={teams.length === 1 ? "My team" : "My teams"} className="mt-6">
+    <Card
+      title={teams.length === 1 ? "My team" : "My teams"}
+      style={{ borderTop: "3px solid #059669" }}
+    >
       <ul className="space-y-4">
         {teams.map((team) => (
           <li key={team._id}>

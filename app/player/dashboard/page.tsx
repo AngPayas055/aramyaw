@@ -61,7 +61,7 @@ export default function PlayerDashboardPage() {
   if (access !== "player" || !token) return null;
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+    <main className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-6 sm:gap-6 sm:px-6 sm:py-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-semibold">Player dashboard</h1>
         <Button onClick={handleSignOut}>Sign out</Button>

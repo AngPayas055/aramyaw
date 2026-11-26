@@ -73,7 +73,10 @@ export default function PlayerProfileForm({ token }: { token: string }) {
   }
 
   return (
-    <Card title="Player profile" className="mt-6 max-w-md">
+    <Card
+      title="Player profile"
+      style={{ borderTop: "3px solid #ea580c" }}
+    >
       {error && <Alert type="error" title={error} showIcon />}
       {!profile && !error && <p role="status">Loading your profile…</p>}
       

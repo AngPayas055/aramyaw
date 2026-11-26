@@ -114,7 +114,10 @@ export default function FindTeamPanel({ token }: { token: string }) {
   const error = seasonError || teamError || requestError;
 
   return (
-    <Card title="Find a team" className="mt-6">
+    <Card
+      title="Player profile"
+      style={{ borderTop: "3px solid #ea580c" }}
+    >
       <div className="flex flex-col gap-4">
         <div>
           <label htmlFor="find-team-season" className="mb-1 block">
