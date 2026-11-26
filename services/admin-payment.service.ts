@@ -54,13 +54,18 @@ export type PendingPlayerPayment = {
   referenceNumber: string;
   expectedAmountCentavos: number;
   paidAt: string;
+  status: PaymentStatus;
+  reviewedAt?: string;
+  rejectionReason?: string;
 };
 
 export async function getPendingPlayerPayments(
   token: string,
   signal?: AbortSignal,
+  status: PaymentStatus = "pending",
 ): Promise<{ payments: PendingPlayerPayment[] }> {
-  const response = await fetch(apiUrl("/api/admin/player-payments"), {
+  const query = new URLSearchParams({ status });
+  const response = await fetch(apiUrl(`/api/admin/player-payments?${query}`), {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
     signal,

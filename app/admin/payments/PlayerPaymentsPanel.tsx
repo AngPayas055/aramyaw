@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Alert, Button, Card, Input, Modal, Select, Space, Table } from "antd";
-
+import { Alert, Button, Card, Input, Modal, Select, Space, Table, Tabs } from "antd";
+import type { PaymentStatus } from "@/services/payment.service";
 import {
   getPendingPlayerPayments,
   reviewPlayerPayment,
@@ -35,6 +35,7 @@ export default function PlayerPaymentsPanel() {
   const [saving, setSaving] = useState(false);
   const [method, setMethod] = useState<"all" | PendingPlayerPayment["method"]>("all");
   const [revision, setRevision] = useState(0);
+  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>("pending");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -44,7 +45,11 @@ export default function PlayerPaymentsPanel() {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("Please sign in again.");
 
-        const { payments } = await getPendingPlayerPayments(token, controller.signal);
+        const { payments } = await getPendingPlayerPayments(
+          token,
+          controller.signal,
+          paymentStatus,
+        );
         if (!controller.signal.aborted) setPayments(payments);
       } catch (error) {
         if (!controller.signal.aborted) {
@@ -60,7 +65,7 @@ export default function PlayerPaymentsPanel() {
     void loadPayments();
 
     return () => controller.abort();
-  }, [revision]);
+  }, [revision, paymentStatus]);
   
   function refreshPayments() {
     setLoadError("");
@@ -136,27 +141,38 @@ export default function PlayerPaymentsPanel() {
         </Button>
         {!loading && !loadError && (
           <span className="text-sm text-gray-600">
-            {visiblePayments.length} pending review
+            {visiblePayments.length} payments
           </span>
         )}
       </div>
+      <Tabs
+        activeKey={paymentStatus}
+        items={[
+          { key: "pending", label: "For verification" },
+          { key: "paid", label: "Paid" },
+          { key: "rejected", label: "Rejected" },
+        ]}
+        onChange={(key) => {
+          if (key !== "pending" && key !== "paid" && key !== "rejected") return;
+
+          setLoadError("");
+          setPayments([]);
+          setLoading(true);
+          setPaymentStatus(key);
+        }}
+      />
 
       {loadError && <Alert type="error" title={loadError} showIcon />}
 
       {!loadError && (
         <Table<PendingPlayerPayment>
-          key={method}
+          key={`${paymentStatus}:${method}`}
           rowKey="_id"
           dataSource={payments}
           loading={loading}
           scroll={{ x: 850 }}
           pagination={{ pageSize: 10, hideOnSinglePage: true }}
-          locale={{
-            emptyText:
-              payments.length === 0
-                ? "No pending player payments."
-                : "No pending player payments for this method.",
-          }}
+          locale={{ emptyText: "No player payments match this view." }}
           columns={[
             {
               title: "Player",
@@ -186,17 +202,25 @@ export default function PlayerPaymentsPanel() {
               ),
             },
             {
-              title: "Review",
-              render: (_, payment) => (
-                <Space>
-                  <Button type="primary" onClick={() => openReview(payment, "paid")}>
-                    Mark paid
-                  </Button>
-                  <Button danger onClick={() => openReview(payment, "rejected")}>
-                    Reject
-                  </Button>
-                </Space>
-              ),
+              title: paymentStatus === "pending" ? "Review" : "Result",
+              render: (_, payment) => {
+                if (payment.status === "paid") return "Paid";
+
+                if (payment.status === "rejected") {
+                  return payment.rejectionReason || "Rejected";
+                }
+
+                return (
+                  <Space>
+                    <Button type="primary" onClick={() => openReview(payment, "paid")}>
+                      Mark paid
+                    </Button>
+                    <Button danger onClick={() => openReview(payment, "rejected")}>
+                      Reject
+                    </Button>
+                  </Space>
+                );
+              },
             },
           ]}
         />
