@@ -145,7 +145,7 @@ export default function PlayerPaymentsPanel() {
           </span>
         )}
       </div>
-      <Tabs
+      <Tabs 
         activeKey={paymentStatus}
         items={[
           { key: "pending", label: "For verification" },
